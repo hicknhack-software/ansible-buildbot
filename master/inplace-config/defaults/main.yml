@@ -1,0 +1,10 @@
+---
+buildbot_master_inplace_repo: "https://github.com/hicknhack-software/buildbot-inplace-config.git"
+buildbot_master_inplace_version: "master"
+
+buildbot_master_inplace_name: "inplace"
+
+buildbot_master_inplace_dest: "~/{{ buildbot_master_name }}/{{ buildbot_master_inplace_name }}"
+
+# default of buildbot/master/nine
+buildbot_master_user: 'buildbot'

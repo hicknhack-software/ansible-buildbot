@@ -1,0 +1,93 @@
+---
+- name: User
+  user:
+    name: '{{ buildbot_master_user }}'
+    comment: 'Dedicated user to run the buildbot master'
+    shell: '/bin/bash'
+  register: user_result
+
+- name: Add PPA
+  apt_repository:
+    repo: 'ppa:chris-lea/node.js'
+
+- name: install APT packages
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+    cache_valid_time: 86400
+  with_items: buildbot_master_packages
+
+- name: Install NPM packages
+  npm:
+    global: yes
+    name: gulp
+
+- name: Install PIP packages
+  pip:
+    name: "{{ item }}"
+  with_items: buildbot_master_pip_packages
+
+- name: Git checkout
+  git:
+    repo: "{{ buildbot_master_repo }}"
+    version: "{{ buildbot_master_version }}"
+    dest: '{{ buildbot_master_path }}'
+    update: no
+
+- name: Install Pkg
+  command: 'pip install --editable pkg'
+  args:
+    chdir: '{{ buildbot_master_path }}'
+    creates: '{{ buildbot_master_path }}/pkg/buildbot_pkg.egg-info'
+
+- name: Install Master
+  command: 'pip install --editable master'
+  args:
+    chdir: '{{ buildbot_master_path }}'
+    creates: '{{ buildbot_master_path }}/master/buildbot.egg-info'
+
+- name: Build Frontend
+  command: 'make frontend'
+  args:
+    chdir: '{{ buildbot_master_path }}'
+    creates: '{{ buildbot_master_path }}/www/base/buildbot_www.egg-info'
+
+# TODO: this may be a seperate role
+- name: Create Master
+  command: 'buildbot create-master {{ buildbot_master_basedir }}'
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+  args:
+    creates: '{{ buildbot_master_basedir }}/buildbot.tac'
+
+- name: Default Configuration
+  template:
+    src: 'master.cfg.j2'
+    dest: "{{ buildbot_master_basedir }}/master.cfg"
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+
+- name: Folders
+  file:
+    dest: '{{ buildbot_master_basedir }}/{{ item }}'
+    state: directory
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+  with_items:
+  - slaves
+  - projects
+
+# TODO: install as service
+- name: Start
+  command: 'buildbot start {{ buildbot_master_basedir }}'
+  ignore_errors: yes
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+
+- name: store facts
+  set_fact:
+    buildbot_master_basedir: '{{ buildbot_master_basedir }}'
+    buildbot_master_slaves_dir: '{{ buildbot_master_basedir }}/slaves'
+    buildbot_master_projects_dir: '{{ buildbot_master_basedir }}/projects'
+    buildbot_master_user: '{{ buildbot_master_user }}'

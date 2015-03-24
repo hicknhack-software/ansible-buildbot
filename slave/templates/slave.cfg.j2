@@ -1,0 +1,7 @@
+# -*- python -*-
+# ex: set syntax=python:
+# {{ ansible_managed }}
+
+BuildmasterSlaves.append(
+  buildslave.BuildSlave("{{ buildbot_slave_name }}", "{{ buildbot_slave_password }}")
+)

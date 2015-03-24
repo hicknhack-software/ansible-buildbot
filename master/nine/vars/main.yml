@@ -1,0 +1,13 @@
+---
+buildbot_master_packages:
+- git # required to checkout
+- nodejs # required for gulp
+- python-pip # required for buildbot pip
+- build-essential # required for building buildbot package
+- python-dev # required for compiling
+- libffi-dev # pyopenssl
+
+buildbot_master_pip_packages:
+- pyopenssl
+- jrnl
+- service_identity

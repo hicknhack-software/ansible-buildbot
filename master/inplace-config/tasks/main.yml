@@ -1,0 +1,9 @@
+---
+- name: Git checkout
+  git:
+    repo: "{{ buildbot_master_inplace_repo }}"
+    version: "{{ buildbot_master_inplace_version }}"
+    dest: '{{ buildbot_master_inplace_dest }}'
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+

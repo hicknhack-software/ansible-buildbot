@@ -1,0 +1,59 @@
+---
+- name: User
+  user:
+    name: '{{ buildbot_slave_user }}'
+    comment: 'Dedicated user to run the buildbot slave'
+
+- name: install APT packages
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+    cache_valid_time: 86400
+  with_items: buildbot_slave_packages
+
+- name: Install PIP packages
+  pip:
+    name: "{{ item }}"
+  with_items: buildbot_slave_pip_packages
+
+- name: Folder
+  file:
+    path: '{{ buildbot_slave_basedir }}'
+    state: directory
+    owner: '{{ buildbot_slave_user }}'
+    group: '{{ buildbot_slave_user }}'
+
+- name: Create
+  command: >
+    buildslave create-slave {{ buildbot_slave_basedir }}
+    {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }}
+    {{ buildbot_slave_name }} {{ buildbot_slave_password }}
+  args:
+    creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
+  sudo: yes
+  sudo_user: '{{ buildbot_slave_user }}'
+
+- name: Add Slave to master
+  template:
+    src: 'slave.cfg.j2'
+    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.cfg'
+  sudo: yes
+  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  register: slave_config_result
+
+- name: Reconfigure master
+  command: 'buildbot reconfig {{ hostvars[buildbot_master_host].buildbot_master_basedir }}'
+  sudo: yes
+  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  when: slave_config_result.changed
+
+# TODO: install as service
+- name: Start
+  command: 'buildslave start {{ buildbot_slave_basedir }}'
+  ignore_errors: yes
+  sudo: yes
+  sudo_user: '{{ buildbot_slave_user }}'
+

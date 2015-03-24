@@ -1,0 +1,23 @@
+# -*- python -*-
+# ex: set syntax=python:
+# {{ ansible_managed }}
+
+from buildbot.plugins import *
+
+c = BuildmasterConfig = {}
+c['slaves'] = BuildmasterSlaves = []
+# add slaves from folder
+
+c['protocols'] = {'pb': {'port': {{ buildbot_master_slave_port }} } }
+c['change_source'] = []
+c['schedulers'] = []
+c['builders'] = []
+c['status'] = []
+
+c['title'] = "{{ buildbot_master_title }}"
+c['titleURL'] = "{{ buildbot_master_title_url }}"
+c['buildbotURL'] = "{{ buildbot_master_url }}"
+
+c['www'] = dict(port={{ buildbot_master_www_port }}, plugins=dict(waterfall_view={}, console_view={}))
+
+c['db'] = { 'db_url' : "sqlite:///state.sqlite" }

@@ -1,0 +1,12 @@
+---
+- name: config
+  template:
+    src: 'project.cfg.j2'
+    dest: '{{ buildbot_master_projects_dir }}/{{ project_name }}.cfg'
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+
+- name: Reconfigure master
+  command: 'buildbot reconfig {{ buildbot_master_basedir }}'
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
