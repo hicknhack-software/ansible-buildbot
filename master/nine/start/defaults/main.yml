@@ -1,0 +1,5 @@
+---
+
+buildbot_master_user: buildbot
+buildbot_master_basedir: '~/{{ buildbot_master_name }}'
+

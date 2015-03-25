@@ -1,0 +1,5 @@
+# TODO: install as service
+- name: Start
+  command: 'buildbot start {{ buildbot_master_basedir }}'
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'

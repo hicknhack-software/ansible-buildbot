@@ -17,3 +17,6 @@ buildbot_master_www_port: 8020
 buildbot_master_url: "http://localhost:{{ buildbot_master_www_port }}/"
 
 buildbot_master_slave_port: 9989
+
+# default of buildbot/master/inplace-config
+buildbot_master_inplace_name: "inplace"

@@ -1,0 +1,22 @@
+# -*- python -*-
+# ex: set syntax=python:
+# {{ ansible_managed }}
+
+import os
+from buildbot.plugins import *
+from {{ buildbot_master_inplace_name }}.common import config, loaders
+from {{ buildbot_master_inplace_name }}.factories import reconfig
+
+reload(config)
+reload(loaders)
+reload(reconfig)
+
+cfg = config.BuildbotConfigurationWrapper()
+cfg.setTitle("{{ buildbot_master_title }}")
+cfg.setTitleUrl("{{ buildbot_master_title_url }}")
+cfg.setConnection("{{ buildbot_master_url }}", {{ buildbot_master_www_port }})
+
+slaveNames = loaders.SlaveLoader.load(cfg, os.path.join(os.getcwd(), 'slaves/'))
+loaders.ProjectLoader.load(cfg, os.path.join(os.getcwd(), 'projects/'), slaveNames)
+
+c = BuildmasterConfig = cfg.getConfigDict()

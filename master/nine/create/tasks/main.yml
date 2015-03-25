@@ -53,7 +53,6 @@
     chdir: '{{ buildbot_master_path }}'
     creates: '{{ buildbot_master_path }}/www/base/buildbot_www.egg-info'
 
-# TODO: this may be a seperate role
 - name: Create Master
   command: 'buildbot create-master {{ buildbot_master_basedir }}'
   sudo: yes
@@ -77,13 +76,6 @@
   with_items:
   - slaves
   - projects
-
-# TODO: install as service
-- name: Start
-  command: 'buildbot start {{ buildbot_master_basedir }}'
-  ignore_errors: yes
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
 
 - name: store facts
   set_fact:
