@@ -2,7 +2,7 @@
 - name: config
   template:
     src: 'project.yml.j2'
-    dest: '{{ buildbot_master_projects_dir }}/{{ project_name }}.cfg'
+    dest: '{{ buildbot_master_projects_dir }}/{{ project_name }}.yml'
   sudo: yes
   sudo_user: '{{ buildbot_master_user }}'
 
@@ -10,3 +10,4 @@
   command: 'buildbot reconfig {{ buildbot_master_basedir }}'
   sudo: yes
   sudo_user: '{{ buildbot_master_user }}'
+  when: ({{ project_reconfig_master }})

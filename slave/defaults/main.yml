@@ -6,7 +6,7 @@ buildbot_slave_password: '{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | r
 
 buildbot_master_host: 'buildbot-vm'
 
-buildbot_slave_basedir: /buildslave
+buildbot_slave_basedir: '/buildslaves/{{ ansible_hostname }}'
 
 buildbot_slave_master_host: '{{ buildbot_master_host }}'
 buildbot_slave_master_port: 9989
