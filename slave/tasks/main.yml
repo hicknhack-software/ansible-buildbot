@@ -36,8 +36,8 @@
 
 - name: Add Slave to master
   template:
-    src: 'slave.cfg.j2'
-    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.cfg'
+    src: 'slave.yml.j2'
+    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.yml'
   sudo: yes
   sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
   delegate_to: '{{ buildbot_master_host }}'
@@ -55,5 +55,7 @@
   command: 'buildslave start {{ buildbot_slave_basedir }}'
   ignore_errors: yes
   sudo: yes
+  args:
+    creates: '{{ buildbot_slave_basedir }}/twistd.pid'
   sudo_user: '{{ buildbot_slave_user }}'
 

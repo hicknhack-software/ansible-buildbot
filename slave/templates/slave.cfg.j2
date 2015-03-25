@@ -1,7 +1,6 @@
-# -*- python -*-
-# ex: set syntax=python:
-# {{ ansible_managed }}
-
-BuildmasterSlaves.append(
-  buildslave.BuildSlave("{{ buildbot_slave_name }}", "{{ buildbot_slave_password }}")
-)
+name: '{{ buildbot_slave_name }}'
+password: '{{ buildbot_slave_password }}'
+shell: '{{ buildbot_slave_shell }}'
+setupDir: '{{ buildbot_setup_dir }}'
+platform: '{{ buildbot_platform }}''
+setups: {{ buildbot_setups }}

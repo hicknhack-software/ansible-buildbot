@@ -11,3 +11,7 @@ buildbot_slave_basedir: /buildslave
 buildbot_slave_master_host: '{{ buildbot_master_host }}'
 buildbot_slave_master_port: 9989
 
+buildbot_slave_shell: 'bash'
+buildbot_slave_setup_dir: '/setups'
+buildbot_slave_platform: 'Ubuntu1404'
+buildbot_slave_setups: []
