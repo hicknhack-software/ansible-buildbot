@@ -24,15 +24,25 @@
     owner: '{{ buildbot_slave_user }}'
     group: '{{ buildbot_slave_user }}'
 
+- name: Generate Slave Password
+  set_fact:
+    generated_slave_password: '{{ buildbot_slave_password }}'
+
+- name: Debug Slave Password  
+  debug: var=generated_slave_password
+
 - name: Create
   command: >
     buildslave create-slave {{ buildbot_slave_basedir }}
     {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }}
-    {{ buildbot_slave_name }} {{ buildbot_slave_password }}
+    {{ buildbot_slave_name }} {{ generated_slave_password }}
   args:
     creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
   sudo: yes
   sudo_user: '{{ buildbot_slave_user }}'
+
+- name: Debug Slave Password II
+  debug: var={{generated_slave_password}}  
 
 - name: Add Slave to master
   template:

@@ -14,7 +14,7 @@ reload(reconfig)
 cfg = config.BuildbotConfigurationWrapper()
 cfg.setTitle("{{ buildbot_master_title }}")
 cfg.setTitleUrl("{{ buildbot_master_title_url }}")
-cfg.setConnection("{{ buildbot_master_url }}", {{ buildbot_master_www_port }})
+cfg.setConnection("{{ buildbot_master_url }}", {{ buildbot_master_slave_port }})
 
 slaveNames = loaders.SlaveLoader.load(cfg, os.path.join(os.getcwd(), 'slaves/'))
 loaders.ProjectLoader.load(cfg, os.path.join(os.getcwd(), 'projects/'), slaveNames)
