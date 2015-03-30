@@ -1,0 +1,10 @@
+---
+# TODO: install as service
+- name: Start
+  command: 'buildslave start {{ buildbot_slave_basedir }}'
+  ignore_errors: yes
+  sudo: yes
+  args:
+    creates: '{{ buildbot_slave_basedir }}/twistd.pid'
+  sudo_user: '{{ buildbot_slave_user }}'
+

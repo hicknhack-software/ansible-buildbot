@@ -28,21 +28,16 @@
   set_fact:
     generated_slave_password: '{{ buildbot_slave_password }}'
 
-- name: Debug Slave Password  
-  debug: var=generated_slave_password
-
 - name: Create
   command: >
     buildslave create-slave {{ buildbot_slave_basedir }}
     {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }}
     {{ buildbot_slave_name }} {{ generated_slave_password }}
-  args:
-    creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
   sudo: yes
   sudo_user: '{{ buildbot_slave_user }}'
-
-- name: Debug Slave Password II
-  debug: var={{generated_slave_password}}  
+  args:
+    creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
+  register: slave_create_result
 
 - name: Add Slave to master
   template:
@@ -51,6 +46,7 @@
   sudo: yes
   sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
   delegate_to: '{{ buildbot_master_host }}'
+  when: slave_create_result.changed
   register: slave_config_result
 
 - name: Reconfigure master
@@ -59,13 +55,3 @@
   sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
   delegate_to: '{{ buildbot_master_host }}'
   when: slave_config_result.changed
-
-# TODO: install as service
-- name: Start
-  command: 'buildslave start {{ buildbot_slave_basedir }}'
-  ignore_errors: yes
-  sudo: yes
-  args:
-    creates: '{{ buildbot_slave_basedir }}/twistd.pid'
-  sudo_user: '{{ buildbot_slave_user }}'
-

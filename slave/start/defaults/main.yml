@@ -1,0 +1,3 @@
+---
+buildbot_slave_user: buildslave
+buildbot_slave_basedir: '/buildslave'
