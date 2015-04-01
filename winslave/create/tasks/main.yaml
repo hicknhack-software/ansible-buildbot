@@ -1,0 +1,43 @@
+---
+- name: Installing Python
+  win_chocolatey:
+    name: '{{ item }}'
+  with_items:
+  - python2
+  - easy.install
+
+- name: Installing Git
+  win_chocolatey: 
+    name: 'git.install'
+    version: '1.9.5.20150114'
+
+- name: Installing Buildbot-Slave
+  script: 'install_buildslave.ps1'
+
+- name: Generate Slave Password
+  set_fact:
+    generated_slave_password: '{{ buildbot_slave_password }}'
+
+- name: Create
+  script: >
+    'create_slave.ps1' {{ buildbot_slave_basedir }} {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }} {{ buildbot_slave_name }} {{ generated_slave_password }}
+  args:
+     creates: '{{ buildbot_slave_basedir }}/buildbot.tac'    
+  register: slave_create_result
+
+- name: Add Slave to master
+  template:
+    src: 'slave.yml.j2'
+    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.yml'
+  sudo: yes
+  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  when: slave_create_result.changed
+  register: slave_config_result
+
+- name: Reconfigure master
+  command: 'buildbot reconfig {{ hostvars[buildbot_master_host].buildbot_master_basedir }}'
+  sudo: yes
+  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  when: slave_config_result.changed

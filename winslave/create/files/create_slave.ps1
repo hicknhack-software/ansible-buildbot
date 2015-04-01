@@ -1,0 +1,1 @@
+buildslave create-slave $args
