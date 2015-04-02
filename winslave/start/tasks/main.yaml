@@ -1,0 +1,8 @@
+---
+# TODO: install as service
+- name: Start
+  script: >
+    'start_slave.ps1' {{ buildbot_slave_basedir }}
+  args:
+    creates: '{{ buildbot_slave_basedir }}/twistd.pid'
+

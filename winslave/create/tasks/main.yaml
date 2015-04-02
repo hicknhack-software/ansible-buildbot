@@ -1,10 +1,11 @@
 ---
 - name: Installing Python
   win_chocolatey:
-    name: '{{ item }}'
-  with_items:
-  - python2
-  - easy.install
+    name: 'python2'
+
+- name: Installing Easy Install
+  win_chocolatey:
+    name: 'easy.install'
 
 - name: Installing Git
   win_chocolatey: 
