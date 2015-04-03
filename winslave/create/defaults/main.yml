@@ -7,8 +7,12 @@ buildbot_slave_basedir: 'C:/buildslave'
 
 buildbot_slave_master_host: '{{ buildbot_master_host }}'
 buildbot_slave_master_port: 9989
+buildbot_slave_reset: no # set yes to force a new password
 
 buildbot_slave_shell: 'cmd'
 buildbot_slave_prepare_dir: 'C:/buildslave/scripts'
 buildbot_slave_platform: 'Windows2012R2'
 buildbot_slave_setups: ['qt530_mingw490']
+
+buildbot_winslave_user: 'vagrant'
+buildbot_winslave_password: 'vagrant'

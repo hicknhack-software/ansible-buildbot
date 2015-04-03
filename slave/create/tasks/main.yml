@@ -53,5 +53,6 @@
   command: 'buildbot reconfig {{ hostvars[buildbot_master_host].buildbot_master_basedir }}'
   sudo: yes
   sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  ignore_errors: yes # build-master is not ready on the first run
   delegate_to: '{{ buildbot_master_host }}'
   when: slave_config_result.changed

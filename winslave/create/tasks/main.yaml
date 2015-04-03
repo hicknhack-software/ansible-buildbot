@@ -1,30 +1,49 @@
 ---
-- name: Installing Python
+- name: Packages
   win_chocolatey:
-    name: 'python2'
+    name: '{{ item }}'
+  with_items:
+  - easy.install
+  - pip
+  - git.install
+  - pywin32 # used to install services
+  - carbon # used to grant privileges http://get-carbon.org/
 
-- name: Installing Easy Install
-  win_chocolatey:
-    name: 'easy.install'
+- name: Stat
+  win_stat:
+    path: '{{ buildbot_winslave_python_script_path }}\buildslave'
+  register: buildbot_winslave_buildslave_result
 
-- name: Installing Git
-  win_chocolatey: 
-    name: 'git.install'
-    version: '1.9.5.20150114'
-
+# pip not available on Windows
 - name: Installing Buildbot-Slave
   script: 'install_buildslave.ps1'
+  register: buildbot_winslave_install_result
+  failed_when: >
+    '' != buildbot_winslave_install_result.stderr
+  when: not buildbot_winslave_buildslave_result.stat.exists
 
-- name: Generate Slave Password
+- name: Generate Password
   set_fact:
     generated_slave_password: '{{ buildbot_slave_password }}'
 
+- name: Stat
+  win_stat:
+    path: '{{ buildbot_slave_basedir }}/buildbot.tac'
+  register: buildbot_winslave_tac_result
+
 - name: Create
   script: >
-    'create_slave.ps1' {{ buildbot_slave_basedir }} {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }} {{ buildbot_slave_name }} {{ generated_slave_password }}
+    create_slave.ps1
+    {{ buildbot_slave_basedir }}
+    {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }}
+    {{ buildbot_slave_name }}
+    {{ generated_slave_password }}
   args:
-     creates: '{{ buildbot_slave_basedir }}/buildbot.tac'    
-  register: slave_create_result
+     creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
+  register: buildbot_winslave_create_result
+  failed_when: >
+    '' != buildbot_winslave_create_result.stderr
+  when: not buildbot_winslave_tac_result.stat.exists
 
 - name: Add Slave to master
   template:
@@ -33,12 +52,29 @@
   sudo: yes
   sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
   delegate_to: '{{ buildbot_master_host }}'
-  when: slave_create_result.changed
+  when: not buildbot_winslave_tac_result.stat.exists
   register: slave_config_result
 
 - name: Reconfigure master
   command: 'buildbot reconfig {{ hostvars[buildbot_master_host].buildbot_master_basedir }}'
   sudo: yes
   sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  ignore_errors: yes # build-master is not ready on the first run
   delegate_to: '{{ buildbot_master_host }}'
   when: slave_config_result.changed
+
+- name: service user
+  script: service_user.ps1 {{ buildbot_winslave_user }}
+  register: buildbot_winslave_service_user_result
+  changed_when: >
+    'Changed' in buildbot_winslave_service_user_result.stdout
+
+- name: service
+  script: >
+    service.ps1 "{{ buildbot_winslave_python_script_path }}" "{{ buildbot_winslave_user }}" "{{ buildbot_winslave_password }}"
+  register: buildbot_winslave_service_result
+  failed_when: >
+    '' != buildbot_winslave_service_result.stderr
+    or ('Error installing service:' in buildbot_winslave_service_result.stdout)
+  changed_when: >
+    ('Service installed' in buildbot_winslave_service_result.stdout)
