@@ -12,14 +12,16 @@
 - name: Packages
   win_chocolatey:
     name: '{{ item }}'
+    register: packages_result
+    failed_when: no # choco reports false negatives, for now i assume everything goes well
   with_items:
   - easy.install
   - pip
   - git.install
   - pywin32 # used to install services
   - carbon # used to grant privileges http://get-carbon.org/
-  register: packages_result
-  failed_when: "('install not successful' in packages_result.stdout)"
+  - 7zip #used to extract sources
+  failed_when: no #same here
 
 - name: Stat
   win_stat:
