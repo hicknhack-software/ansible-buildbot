@@ -9,7 +9,7 @@
 - name: Disable Script Confirmation
   raw: 'choco feature enable -n allowGlobalConfirmation'
 
-- name: Packages
+- name: Install Packages
   win_chocolatey:
     name: '{{ item }}'
     register: packages_result
@@ -17,11 +17,16 @@
   with_items:
   - easy.install
   - pip
-  - git.install
   - pywin32 # used to install services
   - carbon # used to grant privileges http://get-carbon.org/
   - 7zip #used to extract sources
   failed_when: no #same here
+
+- name: Install Git #the latest version is not added to path because of a bug
+  win_chocolatey:
+    name: 'git.install'
+    version: '1.9.5.20150114'
+  failed_when: no
 
 - name: Stat
   win_stat:
