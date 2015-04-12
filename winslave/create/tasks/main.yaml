@@ -1,56 +1,50 @@
 ---
-#TODO: choco exists?
-- name: Make sure Choco is installed
+- name: Packages
   win_chocolatey:
-    name: "python2"
-    ignore_errors: yes
-    async: 20
-
-- name: Disable Script Confirmation
-  raw: 'choco feature enable -n allowGlobalConfirmation'
-
-- name: Install Packages
-  win_chocolatey:
-    name: '{{ item }}'
-    register: packages_result
-    failed_when: no # choco reports false negatives, for now i assume everything goes well
+    name: '{{ item is mapping | ternary(item.name, item) }}'
+    version: '{{ item is mapping | ternary(item.version, omit) }}'
+    showlog: yes
+  register: packages_result
+  failed_when: >
+    (packages_result.msg is defined) and
+    ('0 package(s) failed.' not in packages_result.msg)
   with_items:
+  - name: 'python'
+    version: '2.7.6'
   - easy.install
   - pip
   - pywin32 # used to install services
   - carbon # used to grant privileges http://get-carbon.org/
   - 7zip #used to extract sources
-  failed_when: no #same here
-
-- name: Install Git #the latest version is not added to path because of a bug
-  win_chocolatey:
-    name: 'git.install'
+  - name: 'git.install'
     version: '1.9.5.20150114'
-  failed_when: no
 
-- name: Stat
+- debug:
+   var: packages_result
+
+- name: Stat buildslave
   win_stat:
     path: '{{ buildbot_winslave_python_script_path }}\buildslave'
   register: buildbot_winslave_buildslave_result
 
 # pip not available on Windows
-- name: Installing Buildbot-Slave
+- name: Buildslave
   script: 'install_buildslave.ps1'
   register: buildbot_winslave_install_result
   failed_when: >
-    '' != buildbot_winslave_install_result.stderr
+    ('Successfully installed buildbot-slave' not in buildbot_winslave_install_result.stdout)
   when: not buildbot_winslave_buildslave_result.stat.exists
 
 - name: Generate Password
   set_fact:
     generated_slave_password: '{{ buildbot_slave_password }}'
 
-- name: Stat
+- name: Stat Create_slave
   win_stat:
     path: '{{ buildbot_slave_basedir }}/buildbot.tac'
   register: buildbot_winslave_tac_result
 
-- name: Create
+- name: Create_slave
   script: >
     create_slave.ps1
     {{ buildbot_slave_basedir }}
@@ -97,3 +91,12 @@
     or ('Error installing service:' in buildbot_winslave_service_result.stdout)
   changed_when: >
     ('Service installed' in buildbot_winslave_service_result.stdout)
+
+- name: Prepare Directory
+  raw: >
+    if not exist "{{ buildbot_slave_prepare_dir }}"
+      echo created &&
+      mkdir "{{ buildbot_slave_prepare_dir }}"
+  register: buildbot_prepare_dir_result
+  changed_when: >
+    'created' in buildbot_prepare_dir_result.stdout

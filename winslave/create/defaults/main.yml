@@ -3,14 +3,14 @@ buildbot_slave_password: '{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | r
 
 buildbot_master_host: 'buildbot-vm'
 
-buildbot_slave_basedir: 'C:/buildslave'
+buildbot_slave_basedir: 'C:\buildslave'
 
 buildbot_slave_master_host: '{{ buildbot_master_host }}'
 buildbot_slave_master_port: 9989
 buildbot_slave_reset: no # set yes to force a new password
 
 buildbot_slave_shell: 'cmd'
-buildbot_slave_prepare_dir: 'C:/buildslave/scripts'
+buildbot_slave_prepare_dir: '{{ buildbot_slave_basedir }}\scripts'
 buildbot_slave_platform: 'Windows2012R2'
 buildbot_slave_setups: ['qt54_mingw_491']
 
