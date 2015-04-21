@@ -12,7 +12,7 @@ buildbot_slave_reset: no # set yes to force a new password
 buildbot_slave_shell: 'cmd'
 buildbot_slave_prepare_dir: '{{ buildbot_slave_basedir }}\scripts'
 buildbot_slave_platform: 'Windows2012R2'
-buildbot_slave_setups: ['qt54_mingw_491']
+buildbot_slave_setups: ['qt54_mingw491']
 
 buildbot_winslave_user: 'vagrant'
 buildbot_winslave_password: 'vagrant'
