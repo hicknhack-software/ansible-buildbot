@@ -1,0 +1,16 @@
+---
+- name: Start
+  raw: >
+    buildbot_service.py start {{ buildbot_slave_basedir | replace(backslash, '/') }}
+  register: buildbot_winslave_start_result
+  changed_when: >
+    not 'already running' in buildbot_winslave_start_result.stdout
+  failed_when: >
+    '' != buildbot_winslave_start_result.stderr
+    or 0 != buildbot_winslave_start_result.rc
+    or (
+      (buildbot_winslave_start_result.stdout_lines | length > 1)
+      and (not 'already running' in buildbot_winslave_start_result.stdout)
+    )
+  tags:
+  - winstart

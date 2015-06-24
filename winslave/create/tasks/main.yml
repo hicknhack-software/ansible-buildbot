@@ -11,7 +11,7 @@
   with_items:
   - name: 'python'
     version: '2.7.6'
-  - easy.install
+  - easy.install # would install python (but 0.9.9.x hangs on install)
   - pip
   - pywin32 # used to install services
   - carbon # used to grant privileges http://get-carbon.org/
@@ -19,8 +19,8 @@
   - name: 'git.install'
     version: '1.9.5.20150114'
 
-- debug:
-   var: packages_result
+# - debug:
+#    var: packages_result
 
 - name: Stat buildslave
   win_stat:
@@ -30,9 +30,6 @@
 # pip not available on Windows
 - name: Buildslave
   script: 'install_buildslave.ps1'
-  register: buildbot_winslave_install_result
-  failed_when: >
-    ('Successfully installed buildbot-slave' not in buildbot_winslave_install_result.stdout)
   when: not buildbot_winslave_buildslave_result.stat.exists
 
 - name: Generate Password
@@ -47,15 +44,12 @@
 - name: Create_slave
   script: >
     create_slave.ps1
-    {{ buildbot_slave_basedir }}
+    {{ buildbot_slave_basedir | replace(backslash, '/') }}
     {{ buildbot_slave_master_host }}:{{ buildbot_slave_master_port }}
     {{ buildbot_slave_name }}
     {{ generated_slave_password }}
   args:
      creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
-  register: buildbot_winslave_create_result
-  failed_when: >
-    '' != buildbot_winslave_create_result.stderr
   when: not buildbot_winslave_tac_result.stat.exists
 
 - name: Add Slave to master
@@ -79,8 +73,13 @@
 - name: service user
   script: service_user.ps1 {{ buildbot_winslave_user }}
   register: buildbot_winslave_service_user_result
+  failed_when: >
+    '' != buildbot_winslave_service_user_result.stderr
+    or 0 != buildbot_winslave_service_user_result.rc
   changed_when: >
     'Changed' in buildbot_winslave_service_user_result.stdout
+  tags:
+  - winuser
 
 - name: service
   script: >
@@ -88,6 +87,7 @@
   register: buildbot_winslave_service_result
   failed_when: >
     '' != buildbot_winslave_service_result.stderr
+    or 0 != buildbot_winslave_service_result.rc
     or ('Error installing service:' in buildbot_winslave_service_result.stdout)
   changed_when: >
     ('Service installed' in buildbot_winslave_service_result.stdout)
