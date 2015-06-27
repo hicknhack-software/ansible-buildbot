@@ -1,5 +1,5 @@
 $python = Get-Process python -ErrorAction SilentlyContinue
 if ($python -eq $null) {
-  Start-Process C:\tools\python2\Scripts\buildslave.bat start -NoNewWindow -WorkingDirectory "$($args[0])" -RedirectStandardOutput "c:\tools\SlaveOutput.txt" -RedirectStandardError "c:\tools\SlaveError.txt"
+  Start-Process 'buildslave.bat' start -NoNewWindow -WorkingDirectory "$($args[0])" -RedirectStandardOutput "$($args[0])\SlaveOutput.txt" -RedirectStandardError "$($args[0])\SlaveError.txt"
   echo "Started"
 }

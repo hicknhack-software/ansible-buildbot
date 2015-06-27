@@ -1,4 +1,15 @@
 ---
+- name: Kill CPU Burner
+  script: 'stop_update.ps1'
+  register: buildbot_winslave_kill_result
+  changed_when: >
+    "Killed" in buildbot_winslave_kill_result.stdout
+  failed_when: >
+    '' != buildbot_winslave_kill_result.stderr
+    or 0 != buildbot_winslave_kill_result.rc
+  tags:
+  - winkill
+
 - name: Packages
   win_chocolatey:
     name: '{{ item is mapping | ternary(item.name, item) }}'
@@ -9,25 +20,33 @@
     (packages_result.msg is defined) and
     ('0 package(s) failed.' not in packages_result.msg)
   with_items:
-  - name: 'python'
-    version: '2.7.6'
-  - easy.install # would install python (but 0.9.9.x hangs on install)
-  - pip
-  - pywin32 # used to install services
+  - python2 # 2.7.10 includes pip for buildslave install
   - carbon # used to grant privileges http://get-carbon.org/
-  - 7zip #used to extract sources
-  - name: 'git.install'
+  - 7zip.commandline # used for silent pywin32 install
+  - name: 'git.install' # required to get build sources
     version: '1.9.5.20150114'
+  tags:
+  - winpackages
+
+- name: PyWin32
+  script: 'install_pywin32.ps1'
+  register: buildbot_winslave_pywin32_result
+  changed_when: >
+    "Installed" in buildbot_winslave_pywin32_result.stdout
+  failed_when: >
+    '' != buildbot_winslave_pywin32_result.stderr
+    or 0 != buildbot_winslave_pywin32_result.rc
+  tags:
+  - pywin32
 
 # - debug:
-#    var: packages_result
+#    var: buildbot_winslave_pywin32_result
 
 - name: Stat buildslave
   win_stat:
-    path: '{{ buildbot_winslave_python_script_path }}\buildslave'
+    path: '{{ buildbot_slave_basedir }}'
   register: buildbot_winslave_buildslave_result
 
-# pip not available on Windows
 - name: Buildslave
   script: 'install_buildslave.ps1'
   when: not buildbot_winslave_buildslave_result.stat.exists
@@ -83,7 +102,7 @@
 
 - name: service
   script: >
-    service.ps1 "{{ buildbot_winslave_python_script_path }}" "{{ buildbot_winslave_user }}" "{{ buildbot_winslave_password }}"
+    service.ps1 "{{ buildbot_winslave_user }}" "{{ buildbot_winslave_password }}"
   register: buildbot_winslave_service_result
   failed_when: >
     '' != buildbot_winslave_service_result.stderr
