@@ -1,8 +1,8 @@
 ---
 - name: config
-  template:
-    src: 'project.yml.j2'
-    dest: '{{ buildbot_master_projects_dir }}/{{ project_name }}.yml'
+  file:
+    path: '{{ buildbot_master_projects_dir }}/{{ project_name }}.yml'
+    state: absent
   sudo: yes
   sudo_user: '{{ buildbot_master_user }}'
   notify:

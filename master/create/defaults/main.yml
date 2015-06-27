@@ -1,0 +1,7 @@
+---
+# user for the buildbot master process
+buildbot_master_user: buildmaster
+buildbot_master_password: password
+
+# folder for configurations
+buildbot_master_basedir: '~{{ buildbot_master_user }}'

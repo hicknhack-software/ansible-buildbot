@@ -1,0 +1,46 @@
+---
+- name: reconfig buildslave
+  template:
+    src: 'slave.yml.j2'
+    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.yml'
+  sudo: yes
+  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  notify:
+  - reconfig buildmaster
+
+- name: reconfig buildmaster
+  file:
+    path: "{{ hostvars[buildbot_master_host].buildbot_master_basedir }}/reconfig.txt"
+    state: touch
+  sudo: yes
+  delegate_to: '{{ buildbot_master_host }}'
+
+- name: restart buildslave
+  win_file:
+    path: "{{ buildbot_slave_basedir }}\\restart.txt"
+    state: touch
+  register: restart_txt_result
+  notify:
+  - debug_restart
+  - debug_2
+  - debug_3
+
+- name: debug_restart
+  debug:
+    var: restart_txt_result
+
+- name: debug_2
+  debug:
+    msg: "{{ buildbot_slave_basedir }}\\restart.txt"
+
+- name: debug_3
+  win_stat:
+    path: "{{ buildbot_slave_basedir }}\\restart.txt"
+  register: restart_txt_stat
+  notify:
+  - debug_4
+
+- name: debug_4
+  debug:
+    var: restart_txt_stat

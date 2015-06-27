@@ -1,0 +1,5 @@
+---
+- name: restart buildmaster
+  file:
+    path: "{{ buildbot_master_basedir }}/restart.txt"
+    state: touch

@@ -1,6 +1,15 @@
 ---
+- meta: flush_handlers
+
+- name: Check for Restart
+  win_file:
+    path: "{{ buildbot_slave_basedir }}/restart.txt"
+    state: absent
+  register: buildbot_slave_restart_remove
+
 - name: Start
   raw: >
+    buildbot_service.py restart {{ buildbot_slave_basedir | replace(backslash, '/') }} ||
     buildbot_service.py start {{ buildbot_slave_basedir | replace(backslash, '/') }}
   register: buildbot_winslave_start_result
   changed_when: >
@@ -12,5 +21,6 @@
       (buildbot_winslave_start_result.stdout_lines | length > 1)
       and (not 'already running' in buildbot_winslave_start_result.stdout)
     )
+  when: buildbot_slave_restart_remove.changed
   tags:
   - winstart

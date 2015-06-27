@@ -1,0 +1,5 @@
+---
+- name: reconfig buildmaster
+  file:
+    path: "{{ buildbot_master_basedir }}/reconfig.txt"
+    state: touch

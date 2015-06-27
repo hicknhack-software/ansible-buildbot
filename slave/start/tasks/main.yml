@@ -1,10 +1,16 @@
 ---
-# TODO: install as service
-- name: Start
-  command: 'buildslave start {{ buildbot_slave_basedir }}'
-  ignore_errors: yes
-  sudo: yes
-  args:
-    creates: '{{ buildbot_slave_basedir }}/twistd.pid'
-  sudo_user: '{{ buildbot_slave_user }}'
+- meta: flush_handlers
 
+- name: Check for Restart
+  file:
+    path: "{{ buildbot_slave_basedir }}/restart.txt"
+    state: absent
+  register: buildbot_slave_restart_remove
+
+# TODO: install as service
+- name: Restart
+  shell: |
+    buildslave restart {{ buildbot_slave_basedir }} || buildslave start {{ buildbot_slave_basedir }}
+  sudo: yes
+  sudo_user: '{{ buildbot_slave_user }}'
+  when: buildbot_slave_restart_remove.changed

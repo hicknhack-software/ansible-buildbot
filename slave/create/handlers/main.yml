@@ -1,0 +1,22 @@
+---
+- name: reconfig buildslave
+  template:
+    src: 'slave.yml.j2'
+    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.yml'
+  sudo: yes
+  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  notify:
+  - reconfig buildmaster
+
+- name: reconfig buildmaster
+  file:
+    path: "{{ hostvars[buildbot_master_host].buildbot_master_basedir }}/reconfig.txt"
+    state: touch
+  sudo: yes
+  delegate_to: '{{ buildbot_master_host }}'
+
+- name: restart buildslave
+  file:
+    path: "{{ buildbot_slave_basedir }}/restart.txt"
+    state: touch

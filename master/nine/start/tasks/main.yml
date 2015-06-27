@@ -1,7 +1,0 @@
-# TODO: install as service
-- name: Start
-  command: 'buildbot start {{ buildbot_master_basedir }}' 
-  args:
-    creates: '{{ buildbot_master_basedir }}/twistd.pid'
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'

@@ -1,4 +1,9 @@
 ---
+- name: Capture Version
+  script: 'win32_os_caption.ps1'
+  changed_when: false
+  register: buildbot_win32_os_caption_result
+
 - name: Kill CPU Burner
   script: 'stop_update.ps1'
   register: buildbot_winslave_kill_result
@@ -19,12 +24,7 @@
   failed_when: >
     (packages_result.msg is defined) and
     ('0 package(s) failed.' not in packages_result.msg)
-  with_items:
-  - python2 # 2.7.10 includes pip for buildslave install
-  - carbon # used to grant privileges http://get-carbon.org/
-  - 7zip.commandline # used for silent pywin32 install
-  - name: 'git.install' # required to get build sources
-    version: '1.9.5.20150114'
+  with_items: winslave_choco_packages
   tags:
   - winpackages
 
@@ -39,9 +39,6 @@
   tags:
   - pywin32
 
-# - debug:
-#    var: buildbot_winslave_pywin32_result
-
 - name: Stat buildslave
   win_stat:
     path: '{{ buildbot_slave_basedir }}'
@@ -49,6 +46,8 @@
 
 - name: Buildslave
   script: 'install_buildslave.ps1'
+  args:
+     creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
   when: not buildbot_winslave_buildslave_result.stat.exists
 
 - name: Generate Password
@@ -70,26 +69,21 @@
   args:
      creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
   when: not buildbot_winslave_tac_result.stat.exists
+  notify:
+  - reconfig buildslave
+  - restart buildslave
 
-- name: Add Slave to master
-  template:
-    src: 'slave.yml.j2'
-    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.yml'
-  sudo: yes
-  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
-  delegate_to: '{{ buildbot_master_host }}'
-  when: not buildbot_winslave_tac_result.stat.exists
-  register: slave_config_result
+- name: Admin
+  win_template:
+    src: 'admin.j2'
+    dest: '{{ buildbot_slave_basedir }}/info/admin'
 
-- name: Reconfigure master
-  command: 'buildbot reconfig {{ hostvars[buildbot_master_host].buildbot_master_basedir }}'
-  sudo: yes
-  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
-  ignore_errors: yes # build-master is not ready on the first run
-  delegate_to: '{{ buildbot_master_host }}'
-  when: slave_config_result.changed
+- name: Description
+  win_template:
+    src: 'host.j2'
+    dest: '{{ buildbot_slave_basedir }}/info/host'
 
-- name: service user
+- name: Service User
   script: service_user.ps1 {{ buildbot_winslave_user }}
   register: buildbot_winslave_service_user_result
   failed_when: >
@@ -100,7 +94,7 @@
   tags:
   - winuser
 
-- name: service
+- name: Service
   script: >
     service.ps1 "{{ buildbot_winslave_user }}" "{{ buildbot_winslave_password }}"
   register: buildbot_winslave_service_result
@@ -111,7 +105,7 @@
   changed_when: >
     ('Service installed' in buildbot_winslave_service_result.stdout)
 
-- name: Prepare Directory
+- name: Folder
   raw: >
     if not exist "{{ buildbot_slave_prepare_dir }}"
       echo created &&
@@ -119,3 +113,14 @@
   register: buildbot_prepare_dir_result
   changed_when: >
     'created' in buildbot_prepare_dir_result.stdout
+
+- name: Store facts
+  set_fact:
+    buildbot_win32_os_caption: "{{ buildbot_win32_os_caption_result.stdout | replace('Microsoft ', '') }}"
+    buildbot_master_host: '{{ buildbot_master_host }}'
+    buildbot_winslave_user: '{{ buildbot_winslave_user }}'
+    buildbot_slave_basedir: '{{ buildbot_slave_basedir }}'
+    buildbot_slave_prepare_dir: '{{ buildbot_slave_prepare_dir }}'
+    buildbot_slave_setups: []
+  tags:
+  - facts

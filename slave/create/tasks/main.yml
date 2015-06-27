@@ -1,28 +1,32 @@
 ---
-- name: User
-  user:
-    name: '{{ buildbot_slave_user }}'
-    comment: 'Dedicated user to run the buildbot slave'
-
 - name: install APT packages
   apt:
     name: "{{ item }}"
     update_cache: yes
     state: latest
     cache_valid_time: 86400
-  with_items: buildbot_slave_packages
+  with_items: buildbot_slave_apt_packages
 
 - name: Install PIP packages
   pip:
     name: "{{ item }}"
   with_items: buildbot_slave_pip_packages
 
+- name: User
+  user:
+    name: '{{ buildbot_slave_user }}'
+    comment: 'Dedicated user to run the buildbot slave'
+    shell: '/bin/bash'
+
 - name: Folder
   file:
-    path: '{{ buildbot_slave_basedir }}'
+    path: "{{ item }}"
     state: directory
     owner: '{{ buildbot_slave_user }}'
     group: '{{ buildbot_slave_user }}'
+  with_items:
+  - '{{ buildbot_slave_basedir }}'
+  - '{{ buildbot_slave_prepare_dir }}'
 
 - name: Generate Slave Password
   set_fact:
@@ -37,22 +41,26 @@
   sudo_user: '{{ buildbot_slave_user }}'
   args:
     creates: '{{ buildbot_slave_basedir }}/buildbot.tac'
-  register: slave_create_result
+  notify:
+  - reconfig buildslave
+  - restart buildslave
 
-- name: Add Slave to master
-  template:
-    src: 'slave.yml.j2'
-    dest: '{{ hostvars[buildbot_master_host].buildbot_master_slaves_dir }}/{{ buildbot_slave_name }}.yml'
-  sudo: yes
-  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
-  delegate_to: '{{ buildbot_master_host }}'
-  when: slave_create_result.changed
-  register: slave_config_result
+- name: Admin
+  file:
+    content: "{{ buildbot_slave_admin }}"
+    dest: '{{ buildbot_slave_basedir }}/info/admin'
 
-- name: Reconfigure master
-  command: 'buildbot reconfig {{ hostvars[buildbot_master_host].buildbot_master_basedir }}'
-  sudo: yes
-  sudo_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
-  ignore_errors: yes # build-master is not ready on the first run
-  delegate_to: '{{ buildbot_master_host }}'
-  when: slave_config_result.changed
+- name: Description
+  file:
+    content: "{{ buildbot_slave_description }}"
+    dest: '{{ buildbot_slave_basedir }}/info/host'
+
+- name: Export Facts
+  set_fact:
+    buildbot_master_host: '{{ buildbot_master_host }}'
+    buildbot_slave_user: '{{ buildbot_slave_user }}'
+    buildbot_slave_basedir: '{{ buildbot_slave_basedir }}'
+    buildbot_slave_prepare_dir: '{{ buildbot_slave_prepare_dir }}'
+    buildbot_slave_setups: []
+  tags:
+  - facts

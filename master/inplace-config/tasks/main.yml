@@ -7,3 +7,29 @@
   sudo: yes
   sudo_user: '{{ buildbot_master_user }}'
 
+- name: Folders
+  file:
+    dest: '{{ item }}'
+    state: directory
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+  with_items:
+  - '{{ buildbot_master_slaves_dir }}'
+  - '{{ buildbot_master_projects_dir }}'
+
+- name: Default Configuration
+  template:
+    src: 'master.cfg.j2'
+    dest: "{{ buildbot_master_basedir }}/master.cfg"
+  sudo: yes
+  sudo_user: '{{ buildbot_master_user }}'
+  notify:
+  - reconfig buildmaster
+
+- name: store facts
+  set_fact:
+    buildbot_master_slaves_dir: '{{ buildbot_master_slaves_dir }}'
+    buildbot_master_projects_dir: '{{ buildbot_master_projects_dir }}'
+    buildbot_master_slave_port: '{{ buildbot_master_slave_port }}'
+  tags:
+  - facts

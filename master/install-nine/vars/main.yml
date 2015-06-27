@@ -1,11 +1,17 @@
 ---
-buildbot_master_packages:
+buildbot_master_apt_ppas:
+- 'ppa:chris-lea/node.js'
+
+buildbot_master_apt_packages:
 - git # required to checkout
 - nodejs # required for gulp
 - python-pip # required for buildbot pip
 - build-essential # required for building buildbot package
 - python-dev # required for compiling
 - libffi-dev # pyopenssl
+
+buildbot_master_npm_packages:
+- gulp
 
 buildbot_master_pip_packages:
 - pyopenssl

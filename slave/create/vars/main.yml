@@ -1,5 +1,5 @@
 ---
-buildbot_slave_packages:
+buildbot_slave_apt_packages:
 - git # required to checkout
 - python-pip # required for buildbot pip
 - build-essential # required for building buildbot package

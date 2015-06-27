@@ -6,16 +6,24 @@ A set of roles that help to deploy the buildbot integration setups.
 Requirements
 ------------
 
-Ubuntu 14.04 (Trusty)
+* Ubuntu 14.04 (Trusty)
+* Windows 2012R2
 
 Content Roles
 -------------
 
-* **master/nine** install the buildbot from the git master branch
-* **master/inplace-config** install the buildbot addon for inplace build configurations
-* **project/add** add a project to the buildbot master
-* **project/kill** remove a project from the buildbot master
-* **slave** install a buildslave and add it to the buildbot master
+* **master/install-nine** install the buildbot from the git master branch
+* **master/create** create a buildbot master in a directory
+* **master/inplace-config** install and configure the buildbot addon for inplace build configurations
+* **master/start** start the buildbot master with custom configuration
+* **master/start-inplace** start the buildbot master with the inplace configuration
+* **master/stop** stop the buildbot master
+* **project/add** add a project to the inplace buildbot master
+* **project/kill** remove a project from the inplace buildbot master
+* **slave/create** install a buildslave and add it to the buildbot master
+* **slave/start** start a buildslave
+* **winslave/create** install a buildslave and add it to the buildbot master
+* **winslave/start** start a buildslave
 
 Dependencies
 ------------
@@ -35,13 +43,19 @@ Changelog
 **0.1** (upcoming)
 
 * Essentials to configure and run Buildbot installation
+* Buildbot master with inplace configuration
+* Buildbot slaves for Windows and Ubuntu
+* Git support for projects
 
 Roadmap
 -------
 
 * SCM
   * ☐ Git hosted projects
-  * ☐ SVN hosted projects 
+  * ☐ SVN hosted projects
+* Buildbot slaves on
+  * ☐ MacOS
+  * ☐ CentOS
 * Your ideas
 
 License
@@ -49,7 +63,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2015 dresden-weekly
+Copyright (c) 2015 HicknHack Software GmbH
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
