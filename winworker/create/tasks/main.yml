@@ -1,16 +1,4 @@
 ---
-- include: store_passwd.yml
-
-- name: Capture Version
-  script: 'win32_os_caption.ps1'
-  changed_when: false
-  register: buildbot_win32_os_caption_result
-
-- name: Store facts
-  set_fact:
-    buildbot_win32_os_caption: "{{ buildbot_win32_os_caption_result.stdout | replace('Microsoft ', '') }}"
-  tags: [always]
-
 - name: Kill CPU Burner
   script: 'stop_update.ps1'
   register: buildbot_winworker_kill_result
@@ -22,25 +10,17 @@
   tags:
   - winkill
 
-- name: Fetch Path
-  raw: "Write-Host $env:Path"
-  register: buidbot_winworker_path
-  changed_when: no
+- include: store_passwd.yml
 
-- debug:
-    msg: "{{ buidbot_winworker_path.stdout_lines[0] | regex_replace(';[^;]*\\\\OpenSSH\\\\[^;]*;', ';') }}"
+- name: Capture Version
+  script: 'win32_os_caption.ps1'
+  changed_when: false
+  register: buildbot_win32_os_caption_result
 
-- name: Exclude OpenSSH from Path
-  win_environment:
-    name: "Path"
-    level: "machine"
-    value: "{{ buidbot_winworker_path.stdout_lines[0] | regex_replace(';[^;]*\\\\OpenSSH\\\\[^;]*;', ';') }}"
-
-- name: Unset CYGWIN
-  win_environment:
-    name: "CYGWIN"
-    level: "machine"
-    state: absent
+- name: Store facts
+  set_fact:
+    buildbot_win32_os_caption: "{{ buildbot_win32_os_caption_result.stdout | replace('Microsoft ', '') }}"
+  tags: [always]
 
 - name: Packages
   win_chocolatey:
