@@ -1,0 +1,130 @@
+---
+- include: store_passwd.yml
+
+- name: Capture Version
+  script: 'win32_os_caption.ps1'
+  changed_when: false
+  register: buildbot_win32_os_caption_result
+
+- name: Store facts
+  set_fact:
+    buildbot_win32_os_caption: "{{ buildbot_win32_os_caption_result.stdout | replace('Microsoft ', '') }}"
+  tags: [always]
+
+- name: Kill CPU Burner
+  script: 'stop_update.ps1'
+  register: buildbot_winworker_kill_result
+  changed_when: >
+    "Killed" in buildbot_winworker_kill_result.stdout
+  failed_when: >
+    '' != buildbot_winworker_kill_result.stderr
+    or 0 != buildbot_winworker_kill_result.rc
+  tags:
+  - winkill
+
+- name: Fetch Path
+  raw: "Write-Host $env:Path"
+  register: buidbot_winworker_path
+  changed_when: no
+
+- debug:
+    msg: "{{ buidbot_winworker_path.stdout_lines[0] | regex_replace(';[^;]*\\\\OpenSSH\\\\[^;]*;', ';') }}"
+
+- name: Exclude OpenSSH from Path
+  win_environment:
+    name: "Path"
+    level: "machine"
+    value: "{{ buidbot_winworker_path.stdout_lines[0] | regex_replace(';[^;]*\\\\OpenSSH\\\\[^;]*;', ';') }}"
+
+- name: Unset CYGWIN
+  win_environment:
+    name: "CYGWIN"
+    level: "machine"
+    state: absent
+
+- name: Packages
+  win_chocolatey:
+    name: '{{ item is mapping | ternary(item.name, item) }}'
+    version: '{{ item is mapping | ternary(item.version, omit) }}'
+    showlog: yes
+  register: packages_result
+  with_items: "{{ buildbot_winworker_choco_packages }}"
+  tags:
+  - winpackages
+
+- name: PyWin32
+  script: 'install_pywin32.ps1'
+  register: buildbot_winworker_pywin32_result
+  changed_when: >
+    "Installed" in buildbot_winworker_pywin32_result.stdout
+  failed_when: >
+    '' != buildbot_winworker_pywin32_result.stderr
+    or 0 != buildbot_winworker_pywin32_result.rc
+  tags:
+  - pywin32
+
+- name: Install Buildbot Worker
+  script: 'install_buildbot_worker.ps1'
+  args:
+     creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
+
+- name: Create Worker
+  script: >
+    create_worker.ps1
+    {{ buildbot_worker_basedir | replace(backslash, '/') }}
+    {{ buildbot_worker_master_host }}:{{ buildbot_worker_master_port }}
+    {{ buildbot_worker_name }}
+    {{ generated_worker_password }}
+  args:
+     creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
+  notify:
+  - restart buildbot winworker
+
+- name: Admin
+  win_template:
+    src: 'admin.j2'
+    dest: '{{ buildbot_worker_basedir }}/info/admin'
+
+- name: Description
+  win_template:
+    src: 'host.j2'
+    dest: '{{ buildbot_worker_basedir }}/info/host'
+
+- name: Service User
+  script: service_user.ps1 {{ buildbot_winworker_user }}
+  register: buildbot_winworker_service_user_result
+  failed_when: >
+    '' != buildbot_winworker_service_user_result.stderr
+    or 0 != buildbot_winworker_service_user_result.rc
+  changed_when: >
+    'Changed' in buildbot_winworker_service_user_result.stdout
+  tags:
+  - winuser
+
+- name: Service
+  script: >
+    service.ps1 "{{ buildbot_winworker_user }}" "{{ buildbot_winworker_password }}"
+  register: buildbot_winworker_service_result
+  failed_when: >
+    '' != buildbot_winworker_service_result.stderr
+    or 0 != buildbot_winworker_service_result.rc
+    or ('Error installing service:' in buildbot_winworker_service_result.stdout)
+  changed_when: >
+    ('Service installed' in buildbot_winworker_service_result.stdout)
+
+- name: Folder
+  win_file:
+    dest: "{{ buildbot_worker_prepare_dir }}"
+    state: directory
+
+- name: Store facts
+  set_fact:
+    buildbot_master_host: '{{ buildbot_master_host }}'
+    buildbot_winworker_user: '{{ buildbot_winworker_user }}'
+    buildbot_worker_basedir: '{{ buildbot_worker_basedir }}'
+    buildbot_worker_name: '{{ buildbot_worker_name }}'
+    buildbot_worker_shell: '{{ buildbot_worker_shell }}'
+    buildbot_worker_prepare_dir: '{{ buildbot_worker_prepare_dir }}'
+    buildbot_worker_platforms: '{{ buildbot_worker_platforms }}'
+    buildbot_worker_setups: []
+  tags: [always]

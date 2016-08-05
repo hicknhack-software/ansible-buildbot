@@ -1,0 +1,16 @@
+---
+- meta: flush_handlers
+
+- name: Check for Restart
+  file:
+    path: "{{ buildbot_worker_basedir }}/restart.txt"
+    state: absent
+  register: buildbot_worker_restart_remove
+
+# TODO: install as service
+- name: Restart
+  shell: |
+    buildbot-worker restart {{ buildbot_worker_basedir }} || buildbot-worker start {{ buildbot_worker_basedir }}
+  become: yes
+  become_user: '{{ buildbot_worker_user }}'
+  when: buildbot_worker_restart_remove.changed

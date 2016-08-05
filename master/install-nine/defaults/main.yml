@@ -1,7 +1,5 @@
 ---
-buildbot_master_repo: https://github.com/buildbot/buildbot.git
-buildbot_master_repo_version: 0bc3a370b0885b9ddac8b97fe28eed83713d31cf
-buildbot_master_repo_update: no
+buildbot_version: '0.9.0rc1'
 
 # location where buildbot is installed to
-buildbot_master_path: /opt/buildbot
+buildbot_master_path: /var/buildbot

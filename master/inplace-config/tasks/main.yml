@@ -4,32 +4,34 @@
     repo: "{{ buildbot_master_inplace_repo }}"
     version: "{{ buildbot_master_inplace_version }}"
     dest: '{{ buildbot_master_inplace_dest }}'
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
+  tags: [git]
 
 - name: Folders
   file:
-    dest: '{{ item }}'
+    dest: '{{ buildbot_master_basedir }}/{{ item }}'
     state: directory
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+    owner: '{{ buildbot_master_user }}'
+    group: '{{ buildbot_master_user }}'
   with_items:
-  - '{{ buildbot_master_slaves_dir }}'
+  - '{{ buildbot_master_workers_dir }}'
   - '{{ buildbot_master_projects_dir }}'
 
 - name: Default Configuration
   template:
     src: 'master.cfg.j2'
     dest: "{{ buildbot_master_basedir }}/master.cfg"
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+    owner: '{{ buildbot_master_user }}'
+    group: '{{ buildbot_master_user }}'
   notify:
-  - reconfig buildmaster
+  - reconfigure buildbot master
 
 - name: store facts
   set_fact:
-    buildbot_master_slaves_dir: '{{ buildbot_master_slaves_dir }}'
+    buildbot_master_workers_dir: '{{ buildbot_master_workers_dir }}'
     buildbot_master_projects_dir: '{{ buildbot_master_projects_dir }}'
-    buildbot_master_slave_port: '{{ buildbot_master_slave_port }}'
-  tags:
-  - facts
+    buildbot_master_workers_path: '{{ buildbot_master_workers_path }}'
+    buildbot_master_projects_path: '{{ buildbot_master_projects_path }}'
+    buildbot_master_worker_port: '{{ buildbot_master_worker_port }}'
+  tags: [always]

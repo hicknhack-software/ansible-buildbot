@@ -19,14 +19,14 @@
     state: absent
   register: buildbot_master_restart_remove
 
-- name: restart buildmaster
+- name: restart buildbot master
   shell: |
     set -e
-    if [ -n "$(ls -A {{ buildbot_master_slaves_dir }})" -a -n "$(ls -A {{ buildbot_master_projects_dir }})" ]; then
+    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
       buildbot restart {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
     fi
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   when: buildbot_master_restart_remove.changed
 
 - name: Check for Reconfigure
@@ -35,14 +35,14 @@
     state: absent
   register: buildbot_master_reconfig_remove
 
-- name: reconfigure buildmaster
+- name: reconfigure buildbot master
   shell: |
     set -e
-    if [ -n "$(ls -A {{ buildbot_master_slaves_dir }})" -a -n "$(ls -A {{ buildbot_master_projects_dir }})" ]; then
+    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
       buildbot reconfig {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
     fi
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   when: >
     buildbot_master_reconfig_remove.changed
     and not buildbot_master_restart_remove.changed

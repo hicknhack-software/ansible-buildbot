@@ -1,0 +1,24 @@
+---
+- name: store_passwd | facts directory
+  win_file:
+    path: "{{ buildbot_winworker_password_path.split(backslash)[0:-1] | join(backslash) }}"
+    state: directory
+    recurse: yes
+
+- name: store_passwd | read stored password
+  slurp:
+    src: "{{ buildbot_winworker_password_path }}"
+  failed_when: no
+  register: buildbot_read_password
+
+- name: store_passwd | Generate Worker Password
+  set_fact:
+    generated_worker_password: >-
+      {{ buildbot_read_password.content | b64decode if 'content' in buildbot_read_password else buildbot_worker_password }}
+  tags: [always]
+
+- name: store_passwd | generated worker password
+  win_template:
+    dest: "{{ buildbot_winworker_password_path }}"
+    src: "password.j2"
+  when: generated_worker_password != ''

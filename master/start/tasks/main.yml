@@ -19,11 +19,11 @@
     state: absent
   register: buildbot_master_restart_remove
 
-- name: restart buildmaster
+- name: restart buildbot master
   shell: |
     buildbot restart {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   when: buildbot_master_restart_remove.changed
 
 - name: Check for Reconfigure
@@ -32,11 +32,11 @@
     state: absent
   register: buildbot_master_reconfig_remove
 
-- name: reconfigure buildmaster
+- name: reconfigure buildbot master
   shell: |
     buildbot reconfigure {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   when: >
     buildbot_master_reconfig_remove.changed
     and not buildbot_master_restart_remove.changed

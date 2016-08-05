@@ -20,10 +20,10 @@ Content Roles
 * **master/stop** stop the buildbot master
 * **project/add** add a project to the inplace buildbot master
 * **project/kill** remove a project from the inplace buildbot master
-* **slave/create** install a buildslave and add it to the buildbot master
-* **slave/start** start a buildslave
-* **winslave/create** install a buildslave and add it to the buildbot master
-* **winslave/start** start a buildslave
+* **worker/create** install a worker and add it to the buildbot master
+* **worker/start** start a worker
+* **winworker/create** install a windows worker and add it to the buildbot master
+* **winworker/start** start a windows worker
 
 Dependencies
 ------------
@@ -44,7 +44,7 @@ Changelog
 
 * Essentials to configure and run Buildbot installation
 * Buildbot master with inplace configuration
-* Buildbot slaves for Windows and Ubuntu
+* Buildbot worker for Windows and Ubuntu
 * Git support for projects
 
 Roadmap
@@ -53,7 +53,7 @@ Roadmap
 * SCM
   * ☐ Git hosted projects
   * ☐ SVN hosted projects
-* Buildbot slaves on
+* Buildbot worker on
   * ☐ MacOS
   * ☐ CentOS
 * Your ideas

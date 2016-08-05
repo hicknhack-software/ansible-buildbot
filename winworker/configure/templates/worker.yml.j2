@@ -1,0 +1,8 @@
+name: '{{ buildbot_worker_name }}'
+password: '{{ generated_worker_password }}'
+shell: '{{ buildbot_worker_shell }}'
+setupDir: '{{ buildbot_worker_prepare_dir }}'
+platforms:
+{{ buildbot_worker_platforms | to_nice_yaml }}
+setups:
+{{ buildbot_worker_setups | to_nice_yaml }}
