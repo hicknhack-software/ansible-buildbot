@@ -7,12 +7,12 @@ buildbot_master_inplace_name: "inplace"
 buildbot_master_inplace_dest: "{{ buildbot_master_basedir }}/{{ buildbot_master_inplace_name }}"
 
 # extra configuration folders
-buildbot_master_slaves_dir: '{{ buildbot_master_basedir }}/slaves'
-buildbot_master_projects_dir: '{{ buildbot_master_basedir }}/projects'
+buildbot_master_workers_dir: 'workers'
+buildbot_master_projects_dir: 'projects'
 
 # configurations for master.cfg
 buildbot_master_title: "My Buildbot"
 buildbot_master_title_url: "https://hicknhack-software.com"
 buildbot_master_www_port: 8020
 buildbot_master_url: "http://localhost:{{ buildbot_master_www_port }}/"
-buildbot_master_slave_port: 9989
+buildbot_master_worker_port: 9989

@@ -1,5 +1,5 @@
 ---
 - name: stop buildmaster
   command: buildbot stop {{ buildbot_master_basedir }}
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'

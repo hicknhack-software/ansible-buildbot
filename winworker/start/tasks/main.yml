@@ -1,0 +1,29 @@
+---
+- meta: flush_handlers
+
+- name: Check for Restart
+  win_file:
+    path: "{{ buildbot_worker_basedir }}/restart.txt"
+    state: absent
+  register: buildbot_worker_restart_remove
+
+- name: Start
+  raw: |
+    $script = $env:Path.Split(';') | ?{ "" -ne $_ } | %{ join-path $_ "buildbot_service.py"} | ?{ test-path $_ }
+    python $script restart {{ buildbot_worker_basedir | replace(backslash, '/') }}
+    if (-Not $?) {
+      python $script start {{ buildbot_worker_basedir | replace(backslash, '/') }}
+    }
+  register: buildbot_winworker_start_result
+  changed_when: >
+    not 'already running' in buildbot_winworker_start_result.stdout
+  failed_when: >
+    '' != buildbot_winworker_start_result.stderr
+    or 0 != buildbot_winworker_start_result.rc
+    or (
+      (buildbot_winworker_start_result.stdout_lines | length > 1)
+      and (not 'already running' in buildbot_winworker_start_result.stdout)
+    )
+  when: buildbot_worker_restart_remove.changed
+  tags:
+  - winstart

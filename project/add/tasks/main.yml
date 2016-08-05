@@ -2,8 +2,8 @@
 - name: config
   template:
     src: 'project.yml.j2'
-    dest: '{{ buildbot_master_projects_dir }}/{{ project_name }}.yml'
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+    dest: '{{ buildbot_master_projects_path }}/{{ project_name }}.yml'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   notify:
-  - reconfig buildmaster
+  - reconfigure buildbot master

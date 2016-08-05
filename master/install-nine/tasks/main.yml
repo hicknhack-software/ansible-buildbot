@@ -1,80 +1,40 @@
 ---
-- name: Add PPA
-  apt_repository:
-    repo: "{{ item }}"
-  with_items: buildbot_master_apt_ppas
-
 - name: install APT packages
   apt:
     name: "{{ item }}"
     update_cache: yes
     state: latest
     cache_valid_time: 86400
-  with_items: buildbot_master_apt_packages
+  with_items: "{{ buildbot_master_apt_packages }}"
 
-- name: Install NPM packages
-  npm:
-    global: yes
-    name: "{{ item }}"
-  with_items: buildbot_master_npm_packages
+- name: update pip
+  pip:
+    name: pip
+    state: latest
 
 - name: Install PIP packages
   pip:
     name: "{{ item }}"
-  with_items: buildbot_master_pip_packages
+  with_items: "{{ buildbot_master_pip_packages }}"
 
-- name: Git checkout
-  git:
-    repo: "{{ buildbot_master_repo }}"
-    version: "{{ buildbot_master_repo_version }}"
-    dest: '{{ buildbot_master_path }}'
-    update: '{{ buildbot_master_repo_update }}'
-  register: buildbot_master_git_result
+- name: Install PIP buildbot
+  pip:
+    name: "{{ item }}"
+    version: "{{ buildbot_version }}"
   notify:
-  - restart buildmasters
-
-# data not available
-# - name: Stop for Update
-#   command: 'buildbot stop {{ buildbot_master_basedir }}'
-#   failed_when: no
-#   when: buildbot_master_git_result.changed
-
-- name: Clean for Update
-  file:
-    path: '{{ item }}'
-    state: absent
-  when: buildbot_master_git_result.changed
+  - restart buildbot masters
   with_items:
-  - '{{ buildbot_master_path }}/pkg/buildbot_pkg.egg-info'
-  - '{{ buildbot_master_path }}/master/buildbot.egg-info'
-  - '{{ buildbot_master_path }}/www/base/buildbot_www.egg-info'
+  - buildbot
+  - buildbot-www
+  - buildbot-waterfall-view
+  - buildbot-console-view
 
-- name: Install Pkg
-  command: 'pip install --editable pkg'
-  args:
-    chdir: '{{ buildbot_master_path }}'
-    creates: '{{ buildbot_master_path }}/pkg/buildbot_pkg.egg-info'
-  notify:
-  - restart buildmasters
-
-- name: Install Master
-  command: 'pip install --editable master'
-  args:
-    chdir: '{{ buildbot_master_path }}'
-    creates: '{{ buildbot_master_path }}/master/buildbot.egg-info'
-  notify:
-  - restart buildmasters
-
-- name: Build Frontend
-  command: 'make frontend'
-  args:
-    chdir: '{{ buildbot_master_path }}'
-    creates: '{{ buildbot_master_path }}/www/base/buildbot_www.egg-info'
-  notify:
-  - restart buildmasters
+- name: Path
+  file:
+    path: "{{ buildbot_master_path }}"
+    state: directory
 
 - name: Store Facts
   set_fact:
     buildbot_master_path: '{{ buildbot_master_path }}'
-  tags:
-  - facts
+  tags: [always]

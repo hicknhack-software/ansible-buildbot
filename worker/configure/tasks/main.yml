@@ -1,0 +1,10 @@
+---
+- name: reconfig buildbot worker
+  template:
+    src: 'worker.yml.j2'
+    dest: '{{ hostvars[buildbot_master_host].buildbot_master_workers_path }}/{{ buildbot_worker_name }}.yml'
+  become: yes
+  become_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
+  delegate_to: '{{ buildbot_master_host }}'
+  notify:
+  - reconfig buildbot master

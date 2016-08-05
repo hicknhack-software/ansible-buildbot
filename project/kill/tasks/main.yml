@@ -1,9 +1,9 @@
 ---
 - name: config
   file:
-    path: '{{ buildbot_master_projects_dir }}/{{ project_name }}.yml'
+    path: '{{ buildbot_master_projects_path }}/{{ project_name }}.yml'
     state: absent
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   notify:
-  - reconfig buildmaster
+  - reconfigure buildbot master

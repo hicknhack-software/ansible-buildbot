@@ -1,0 +1,12 @@
+---
+- name: reconfigure buildbot master
+  file:
+    path: "{{ hostvars[buildbot_master_host].buildbot_master_basedir }}/reconfig.txt"
+    state: touch
+  become: yes
+  delegate_to: '{{ buildbot_master_host }}'
+
+- name: restart buildbot winworker
+  win_file:
+    path: "{{ buildbot_worker_basedir }}\\restart.txt"
+    state: touch

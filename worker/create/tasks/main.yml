@@ -1,0 +1,70 @@
+---
+- include: store_passwd.yml
+
+- name: install APT packages
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+    cache_valid_time: 86400
+  with_items: "{{ buildbot_worker_apt_packages }}"
+
+- name: Install PIP packages
+  pip:
+    name: "{{ item }}"
+  with_items: "{{ buildbot_worker_pip_packages }}"
+
+- name: Install PIP buildbot worker
+  pip:
+    name: "buildbot-worker"
+    version: "{{ buildbot_version }}"
+
+- name: User
+  user:
+    name: '{{ buildbot_worker_user }}'
+    comment: 'Dedicated user to run the buildbot worker'
+    shell: '/bin/bash'
+
+- name: Folder
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: '{{ buildbot_worker_user }}'
+    group: '{{ buildbot_worker_user }}'
+  with_items:
+  - '{{ buildbot_worker_basedir }}'
+  - '{{ buildbot_worker_prepare_dir }}'
+
+- name: Create
+  command: >
+    buildbot-worker create-worker {{ buildbot_worker_basedir }}
+    {{ buildbot_worker_master_host }}:{{ buildbot_worker_master_port }}
+    {{ buildbot_worker_name }} {{ generated_worker_password }}
+  become: yes
+  become_user: '{{ buildbot_worker_user }}'
+  args:
+    creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
+  notify:
+  - restart buildbot worker
+
+- name: Admin
+  file:
+    content: "{{ buildbot_worker_admin }}"
+    dest: '{{ buildbot_worker_basedir }}/info/admin'
+
+- name: Description
+  file:
+    content: "{{ buildbot_worker_description }}"
+    dest: '{{ buildbot_worker_basedir }}/info/host'
+
+- name: Export Facts
+  set_fact:
+    buildbot_master_host: '{{ buildbot_master_host }}'
+    buildbot_worker_name: '{{ buildbot_worker_name }}'
+    buildbot_worker_user: '{{ buildbot_worker_user }}'
+    buildbot_worker_shell: '{{ buildbot_worker_shell }}'
+    buildbot_worker_basedir: '{{ buildbot_worker_basedir }}'
+    buildbot_worker_prepare_dir: '{{ buildbot_worker_prepare_dir }}'
+    buildbot_worker_platforms: '{{ buildbot_worker_platforms }}'
+    buildbot_worker_setups: []
+  tags: [always]

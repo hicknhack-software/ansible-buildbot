@@ -7,27 +7,27 @@
 
 - name: Create Master
   command: 'buildbot create-master {{ buildbot_master_basedir }}'
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   args:
     creates: '{{ buildbot_master_basedir }}/buildbot.tac'
   register: buildbot_master_create_result
   notify:
-  - restart buildmaster
+  - restart buildbot master
 
 - name: Upgrade Master
   command: 'buildbot upgrade-master {{ buildbot_master_basedir }}'
-  sudo: yes
-  sudo_user: '{{ buildbot_master_user }}'
+  become: yes
+  become_user: '{{ buildbot_master_user }}'
   when: >
-    buildbot_master_git_result.changed
+    ((buildbot_master_pip_result | default({})).changed | default(False))
     and not buildbot_master_create_result.changed
   notify:
-  - restart buildmaster
+  - restart buildbot master
 
 - name: store facts
   set_fact:
     buildbot_master_basedir: '{{ buildbot_master_basedir }}'
     buildbot_master_user: '{{ buildbot_master_user }}'
-  tags:
-  - facts
+  tags: [always]
+
