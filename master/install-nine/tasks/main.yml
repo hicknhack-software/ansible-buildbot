@@ -7,6 +7,14 @@
     cache_valid_time: 86400
   with_items: "{{ buildbot_master_apt_packages }}"
 
+- name: install Xenial APT packages
+  apt:
+    name: libssl-dev
+    update_cache: yes
+    state: latest
+    cache_valid_time: 86400
+  when: ansible_distribution_release == 'xenial'
+
 - name: update pip
   pip:
     name: pip
