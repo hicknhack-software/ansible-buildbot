@@ -1,4 +1,4 @@
-pip install buildbot-worker==0.9.0rc1
+pip install buildbot-worker==0.9.0.post1
 $x = $LASTEXITCODE
 if (0 -eq $x) {
   # reload paths
