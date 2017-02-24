@@ -14,9 +14,18 @@
     name: "{{ item }}"
   with_items: "{{ buildbot_worker_pip_packages }}"
 
+- name: update PIP/Setuptools
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - pip
+    - setuptools
+
 - name: Install PIP buildbot worker
   pip:
     name: "buildbot-worker"
+    extra_args: "--no-binary :all:"
     version: "{{ buildbot_version }}"
 
 - name: User
