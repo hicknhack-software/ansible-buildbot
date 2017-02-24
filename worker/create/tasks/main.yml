@@ -20,12 +20,11 @@
     state: latest
   with_items:
     - pip
-    - setuptools
+    - setuptools # buildbot fails otherwise
 
 - name: Install PIP buildbot worker
   pip:
     name: "buildbot-worker"
-    extra_args: "--no-binary :all:"
     version: "{{ buildbot_version }}"
 
 - name: User

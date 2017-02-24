@@ -12,7 +12,7 @@ Requirements
 Content Roles
 -------------
 
-* **master/install-nine** install the buildbot from the git master branch
+* **master/install** install the buildbot from the git master branch
 * **master/create** create a buildbot master in a directory
 * **master/inplace-config** install and configure the buildbot addon for inplace build configurations
 * **master/start** start the buildbot master with custom configuration
