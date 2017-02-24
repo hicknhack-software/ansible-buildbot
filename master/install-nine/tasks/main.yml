@@ -24,7 +24,7 @@
   notify:
   - restart buildbot masters
   with_items:
-  - buildbot
+  - buildbot[tls] # explicitly set the TLS option
   - buildbot-www
   - buildbot-waterfall-view
   - buildbot-console-view

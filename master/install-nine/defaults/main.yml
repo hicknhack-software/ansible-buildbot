@@ -1,5 +1,5 @@
 ---
-buildbot_version: '0.9.0.post1'
+buildbot_version: '0.9.4'
 
 # location where buildbot is installed to
 buildbot_master_path: /var/buildbot
