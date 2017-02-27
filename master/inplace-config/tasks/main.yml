@@ -1,4 +1,8 @@
 ---
+- name: Install dependencies
+  pip:
+    name: 'pyYAML'
+
 - name: Git checkout
   git:
     repo: "{{ buildbot_master_inplace_repo }}"
