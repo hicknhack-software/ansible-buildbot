@@ -1,6 +1,7 @@
 ---
+# git repo and branch to clone inplace from
 buildbot_master_inplace_repo: "https://github.com/hicknhack-software/buildbot-inplace-config.git"
-buildbot_master_inplace_version: "master"
+buildbot_master_inplace_version: "build-configin"
 
 # where inplace is installed
 buildbot_master_inplace_name: "inplace"
