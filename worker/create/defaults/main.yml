@@ -5,7 +5,7 @@ buildbot_worker_description: "Buildbot worker build by Ansible"
 buildbot_version: '0.9.4'
 
 # the user that executes the builds
-buildbot_worker_user: build
+buildbot_worker_user: 'build'
 
 # base folder for all worker configurations
 buildbot_worker_basedir: '~{{ buildbot_worker_user }}'
