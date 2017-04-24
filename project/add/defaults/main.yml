@@ -5,3 +5,7 @@ project_repo_url: '[add your own here]'
 project_repo_user: ''
 project_repo_password: ''
 project_repo_branch: 'master'
+project_credentials:
+  - url: ''
+    user: ''
+    password: ''
