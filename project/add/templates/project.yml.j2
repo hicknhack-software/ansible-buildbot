@@ -4,4 +4,9 @@ repoUrl: '{{ project_repo_url }}'
 repoBranch: '{{ project_repo_branch }}'
 repoUser: '{{ project_repo_user }}'
 repoPassword: '{{ project_repo_password }}'
-repoCredentials: ''{{ project_repo_credentials }}
+repoCredentials:
+{% for credential in project_repo_credentials %}	
+  - url: "{{ credential['url'] }}"
+    user: "{{ credential['user'] }}"
+	password: "{{ credential['password'] }}"
+{% endfor %}
