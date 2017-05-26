@@ -8,6 +8,7 @@
     repo: "{{ buildbot_master_inplace_repo }}"
     version: "{{ buildbot_master_inplace_version }}"
     dest: '{{ buildbot_master_inplace_dest }}'
+    force: yes
   become: yes
   become_user: '{{ buildbot_master_user }}'
   tags: [git]
@@ -21,6 +22,7 @@
   with_items:
   - '{{ buildbot_master_workers_dir }}'
   - '{{ buildbot_master_projects_dir }}'
+  - '{{ buildbot_master_products_dir }}'
 
 - name: Default Configuration
   template:

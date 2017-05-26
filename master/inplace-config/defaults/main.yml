@@ -1,7 +1,7 @@
 ---
 # git repo and branch to clone inplace from
 buildbot_master_inplace_repo: "https://github.com/hicknhack-software/buildbot-inplace-config.git"
-buildbot_master_inplace_version: "authenticate_step"
+buildbot_master_inplace_version: "product_upload"
 
 # where inplace is installed
 buildbot_master_inplace_name: "inplace"
@@ -10,6 +10,7 @@ buildbot_master_inplace_dest: "{{ buildbot_master_basedir }}/{{ buildbot_master_
 # extra configuration folders
 buildbot_master_workers_dir: 'workers'
 buildbot_master_projects_dir: 'projects'
+buildbot_master_products_dir: 'products'
 
 # configurations for master.cfg
 buildbot_master_title: "My Buildbot"
