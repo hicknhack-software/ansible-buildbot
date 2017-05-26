@@ -30,7 +30,7 @@ c['www'] = dict(port={{ buildbot_master_www_port }}, plugins=dict(waterfall_view
 
 c['db'] = {'db_url': "sqlite:///state.sqlite"}
 
-c['products_dir'] = "{{ buildbot_master_products_dir }}""
+c['products_dir'] = "{{ buildbot_master_products_dir }}"
 
 # add change_source, schedulers and builders for all projects and workers
 c.setup_inplace()
