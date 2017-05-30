@@ -45,8 +45,8 @@
 
 - name: Install Buildbot Worker
   script: 'install_buildbot_worker.ps1'
-  args:
-     creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
+  # args:
+  #    creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
 
 - name: Create Worker
   script: >
@@ -81,9 +81,19 @@
   tags:
   - winuser
 
+# - name: Service
+#   script: >
+#     service.ps1 "{{ buildbot_winworker_user }}" "{{ buildbot_winworker_password }}"
+#   register: buildbot_winworker_service_result
+#   failed_when: >
+#     '' != buildbot_winworker_service_result.stderr
+#     or 0 != buildbot_winworker_service_result.rc
+#     or ('Error installing service:' in buildbot_winworker_service_result.stdout)
+#   changed_when: >
+#     ('Service installed' in buildbot_winworker_service_result.stdout)
+
 - name: Service
-  script: >
-    service.ps1 "{{ buildbot_winworker_user }}" "{{ buildbot_winworker_password }}"
+  win_command: "buildbot_worker_windows_service.exe --startup auto --user .\{{ buildbot_winworker_user }} --password {{ buildbot_winworker_password }} install"
   register: buildbot_winworker_service_result
   failed_when: >
     '' != buildbot_winworker_service_result.stderr
