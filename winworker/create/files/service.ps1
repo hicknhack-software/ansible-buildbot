@@ -15,5 +15,5 @@ if (!(Test-Path $localPython)) {
 $pyHome = Split-Path $localPython -Parent
 $scriptsPath = Join-Path $pyHome "Scripts"
 
-&$localPython "$scriptsPath\buildbot_service.py" "--startup" "auto" "--user" ".\$($args[0])" "--password" "$($args[1])" "install"
+&$localPython "$scriptsPath\buildbot_windows_service.py" "--startup" "auto" "--user" ".\$($args[0])" "--password" "$($args[1])" "install"
 exit $LASTEXITCODE
