@@ -93,7 +93,7 @@
 #     ('Service installed' in buildbot_winworker_service_result.stdout)
 
 - name: Service
-  win_command: "buildbot_worker_windows_service.exe --startup auto --user .\{{ buildbot_winworker_user }} --password {{ buildbot_winworker_password }} install"
+  win_command: "buildbot_worker_windows_service.exe --startup auto --user .\\{{ buildbot_winworker_user }} --password {{ buildbot_winworker_password }} install"
   register: buildbot_winworker_service_result
   failed_when: >
     '' != buildbot_winworker_service_result.stderr
