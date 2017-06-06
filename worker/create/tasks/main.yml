@@ -42,6 +42,12 @@
   with_items:
   - '{{ buildbot_worker_basedir }}'
   - '{{ buildbot_worker_prepare_dir }}'
+  - '{{ buildbot_worker_utilities_dir }}'
+
+- name: Create Utilities
+  copy:
+    src: 'utilities/'
+    dest: "{{ buildbot_worker_utilities_dir }}"
 
 - name: Create
   command: >

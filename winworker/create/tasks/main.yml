@@ -93,8 +93,16 @@
 
 - name: Folder
   win_file:
-    dest: "{{ buildbot_worker_prepare_dir }}"
+    dest: "{{ item }}"
     state: directory
+  with_items:
+    - "{{ buildbot_worker_prepare_dir }}"
+    - "{{ buildbot_worker_utilities_dir }}"
+
+- name: Create Utilities
+  win_copy:
+    src: 'utilities/'
+    dest: "{{ buildbot_worker_utilities_dir }}"
 
 - name: Store facts
   set_fact:
