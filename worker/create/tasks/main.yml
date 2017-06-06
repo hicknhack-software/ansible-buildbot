@@ -11,8 +11,8 @@
 
 - name: Install PIP packages
   pip:
-    name: "{{ item }}"
-  with_items: "{{ buildbot_worker_pip_packages }}"
+    name: '{{ item }}'
+  with_items: '{{ buildbot_worker_pip_packages }}'
 
 - name: update PIP/Setuptools
   pip:
@@ -35,7 +35,7 @@
 
 - name: Folder
   file:
-    path: "{{ item }}"
+    path: '{{ item }}'
     state: directory
     owner: '{{ buildbot_worker_user }}'
     group: '{{ buildbot_worker_user }}'
@@ -48,6 +48,11 @@
   copy:
     src: 'utilities/'
     dest: "{{ buildbot_worker_utilities_dir }}"
+
+- name: Create Utilities
+  copy:
+    src: 'utilities/'
+    dest: '{{ buildbot_worker_utilities_dir }}'
 
 - name: Create
   command: >
@@ -63,7 +68,7 @@
 
 - name: Admin
   file:
-    content: "{{ buildbot_worker_admin }}"
+    content: '{{ buildbot_worker_admin }}'
     dest: '{{ buildbot_worker_basedir }}/info/admin'
 
 - name: Description
