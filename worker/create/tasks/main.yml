@@ -47,12 +47,9 @@
 - name: Create Utilities
   copy:
     src: 'utilities/'
-    dest: "{{ buildbot_worker_utilities_dir }}"
-
-- name: Create Utilities
-  copy:
-    src: 'utilities/'
     dest: '{{ buildbot_worker_utilities_dir }}'
+    owner: '{{ buildbot_worker_user }}'
+    group: '{{ buildbot_worker_user }}'
 
 - name: Create
   command: >
