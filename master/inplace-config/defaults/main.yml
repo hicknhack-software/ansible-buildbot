@@ -18,3 +18,13 @@ buildbot_master_title_url: "https://hicknhack-software.com"
 buildbot_master_www_port: 8020
 buildbot_master_url: "http://localhost:{{ buildbot_master_www_port }}/"
 buildbot_master_worker_port: 9989
+
+buildbot_master_users:
+  - user: admin
+    password: admin
+    roles:
+      - admin
+  - user: developer
+    password: developer
+    roles:
+      - developer
