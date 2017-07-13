@@ -27,21 +27,15 @@ c['titleURL'] = "{{ buildbot_master_title_url }}"
 
 c['buildbotURL'] = "{{ buildbot_master_url }}"
 
-auth=util.UserPasswordAuth( {
-{% for user in buildbot_master_users|default( [], true ) %}
-	'{{ user.user }}' : '{{ user.password }}'
-{% endfor %}
-}
-)
-
 c['www'] = {
 	'port': {{ buildbot_master_www_port }},
 	'plugins': {
 		    'waterfall_view' : True,
 		    'console_view': True
-	           },	 
-	'auth': auth
+	           }
 }
+c.load_users('{{ buildbot_master_users_dir }}')
+
 c['db'] = {'db_url': "sqlite:///state.sqlite"}
 
 # add change_source, schedulers and builders for all projects and workers
