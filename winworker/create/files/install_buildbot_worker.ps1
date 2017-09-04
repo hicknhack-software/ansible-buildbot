@@ -1,4 +1,4 @@
-pip install buildbot-worker==0.9.9 --upgrade --no-binary buildbot-worker
+pip install buildbot-worker==0.9.10 --upgrade --no-binary buildbot-worker
 $x = $LASTEXITCODE
 if (0 -eq $x) {
   # reload paths
