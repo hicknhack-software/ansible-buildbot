@@ -23,6 +23,7 @@
   - '{{ buildbot_master_workers_dir }}'
   - '{{ buildbot_master_projects_dir }}'
   - '{{ buildbot_master_products_dir }}'
+  - '{{ buildbot_master_users_dir }}'
 
 - name: Default Configuration
   template:

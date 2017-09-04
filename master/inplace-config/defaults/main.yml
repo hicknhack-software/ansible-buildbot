@@ -11,6 +11,7 @@ buildbot_master_inplace_dest: "{{ buildbot_master_basedir }}/{{ buildbot_master_
 buildbot_master_workers_dir: 'workers'
 buildbot_master_projects_dir: 'projects'
 buildbot_master_products_dir: 'products'
+buildbot_master_users_dir: 'users'
 
 # configurations for master.cfg
 buildbot_master_title: "My Buildbot"
