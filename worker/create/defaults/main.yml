@@ -2,7 +2,7 @@
 buildbot_master_host: '' # required ansible hostname
 buildbot_worker_admin: "Ansible <admin@{{ buildbot_worker_name }}>"
 buildbot_worker_description: "Buildbot worker build by Ansible"
-buildbot_version: '1.1'
+buildbot_version: '1.1.0'
 
 # the user that executes the builds
 buildbot_worker_user: 'build'
