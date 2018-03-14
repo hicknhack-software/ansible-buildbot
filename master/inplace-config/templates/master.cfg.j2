@@ -19,8 +19,13 @@ c.load_workers('{{ buildbot_master_workers_dir }}')
 # loading projects
 c.load_projects('{{ buildbot_master_projects_dir }}')
 
-# TODO: add status targets
-c['status'] = []
+# TODO: Setup mail reporter
+# m = reporters.MailNotifier(fromaddr="buildbot@localhost",
+#                            extraRecipients=["builds@lists.example.com"],
+#                            sendToInterestedUsers=False)
+# c['services'].append(m)
+
+c['buildbotNetUsageData'] = None
 
 c['title'] = "{{ buildbot_master_title }}"
 c['titleURL'] = "{{ buildbot_master_title_url }}"
