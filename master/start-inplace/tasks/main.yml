@@ -22,7 +22,7 @@
 - name: restart buildbot master
   shell: |
     set -e
-    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
+    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" -a -n "$(ls -A {{ buildbot_master_users_path }})" ]; then
       buildbot restart {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
     fi
   become: yes
@@ -38,7 +38,7 @@
 - name: reconfigure buildbot master
   shell: |
     set -e
-    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
+    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" -a -n "$(ls -A {{ buildbot_master_users_path }})" ]; then
       buildbot reconfig {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
     fi
   become: yes
