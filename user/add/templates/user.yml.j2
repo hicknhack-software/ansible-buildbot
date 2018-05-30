@@ -1,0 +1,8 @@
+users:
+  - name: '{{ username }}'
+    password: '{{ password }}'
+    capabilities:
+    {% for cap in capabilities %}
+  - '{{ cap }}'
+    {% endfor %}
+
