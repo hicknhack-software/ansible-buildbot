@@ -41,7 +41,7 @@ if (!(Test-Path $sitePackages)) {
 }
 
 $simpleVersion = $(&$localPython --version 2>&1) | Select-String -Pattern '^.*\s+(\d\.\d)(\.\d+){0,1}$' | % { $_.Matches.Groups[1].Value }
-$build = 219
+$build = 223
 $arch = $Env:PROCESSOR_ARCHITECTURE.ToLower()
 
 if ((Test-Path "C:\Windows\system32\pywintypes*.dll") -and (Test-Path(Join-Path $sitePackages "pywin32-$build-py$simpleVersion.egg-info"))) {
@@ -55,9 +55,16 @@ if (!(Test-Path (Which "7z.exe"))) {
 }
 
 if ($arch -ne "amd64") { $arch = "32" } else { $arch = "-" + $arch }
-$url = "http://sourceforge.net/projects/pywin32/files/pywin32/Build%20$build/pywin32-$build.win$arch-py$simpleVersion.exe/download"
+$url = "https://github.com/mhammond/pywin32/releases/download/b$build/pywin32-$build.win$arch-py$simpleVersion.exe"
+
 $dest = Join-Path $Env:Temp "pywin32-$build.$simpleVersion.exe"
-(new-object System.Net.WebClient).DownloadFile($url, $dest)
+try {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    (new-object System.Net.WebClient).DownloadFile($url, $dest)
+} catch {
+    throw "Download failed: $url with ${_}"
+}
+
 $xTemp = Join-Path $Env:Temp 'pywin32-temp1'
 Expand7z $dest $xTemp
 Remove-Item -Force $dest
