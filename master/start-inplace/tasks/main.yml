@@ -22,8 +22,11 @@
 - name: restart buildbot master
   shell: |
     set -e
-    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" -a -n "$(ls -A {{ buildbot_master_users_path }})" ]; then
+    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
       buildbot restart {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
+    else
+      echo "Not starting master buildbot, because either no workers or no projects configured!" 1>&2
+      exit 1
     fi
   become: yes
   become_user: '{{ buildbot_master_user }}'
@@ -38,7 +41,7 @@
 - name: reconfigure buildbot master
   shell: |
     set -e
-    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" -a -n "$(ls -A {{ buildbot_master_users_path }})" ]; then
+    if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
       buildbot reconfig {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
     fi
   become: yes
