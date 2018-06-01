@@ -7,4 +7,4 @@
   become_user: '{{ hostvars[buildbot_master_host].buildbot_master_user }}'
   delegate_to: '{{ buildbot_master_host }}'
   notify:
-  - reconfig buildbot master
+  - reconfigure buildbot master

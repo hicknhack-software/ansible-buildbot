@@ -32,6 +32,11 @@
   - buildbot-waterfall-view
   - buildbot-console-view
 
+- name: SystemD Unit File
+  template:
+    src: buildbot.service.j2
+    dest: /etc/systemd/system/buildbot.service
+
 - name: Path
   file:
     path: "{{ buildbot_master_path }}"

@@ -1,5 +1,5 @@
 ---
 - name: reconfigure buildbot master
-  file:
-    path: "{{ buildbot_master_basedir }}/reconfig.txt"
-    state: touch
+  service:
+    name: buildbot
+    state: reloaded

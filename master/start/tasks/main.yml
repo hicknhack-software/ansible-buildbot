@@ -1,42 +1,6 @@
 ---
-- meta: flush_handlers
 
-- name: Check Restarts
-  file:
-    path: "{{ buildbot_master_path }}/restart.txt"
-    state: absent
-  register: buildbot_masters_restart_remove
-
-- name: Trigger Restarts
-  file:
-    path: "{{ buildbot_master_basedir }}/restart.txt"
-    state: touch
-  when: buildbot_masters_restart_remove.changed
-
-- name: Check for Restart
-  file:
-    path: "{{ buildbot_master_basedir }}/restart.txt"
-    state: absent
-  register: buildbot_master_restart_remove
-
-- name: restart buildbot master
-  shell: |
-    buildbot restart {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
-  become: yes
-  become_user: '{{ buildbot_master_user }}'
-  when: buildbot_master_restart_remove.changed
-
-- name: Check for Reconfigure
-  file:
-    path: "{{ buildbot_master_basedir }}/reconfig.txt"
-    state: absent
-  register: buildbot_master_reconfig_remove
-
-- name: reconfigure buildbot master
-  shell: |
-    buildbot reconfigure {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
-  become: yes
-  become_user: '{{ buildbot_master_user }}'
-  when: >
-    buildbot_master_reconfig_remove.changed
-    and not buildbot_master_restart_remove.changed
+- name: start buildbot master
+  service:
+    name: buildbot
+    state: started

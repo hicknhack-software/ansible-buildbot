@@ -8,7 +8,7 @@ buildbot_version: '1.1.0'
 buildbot_worker_user: 'build'
 
 # base folder for all worker configurations
-buildbot_worker_basedir: '~{{ buildbot_worker_user }}'
+buildbot_worker_basedir: '/home/{{ buildbot_worker_user }}'
 
 # base filename for the worker
 buildbot_worker_name: '{{ ansible_hostname }}'
