@@ -5,6 +5,5 @@ try {
     echo "Changed"
   }
 } catch [System.Exception] {
-  echo "Error"
-  exit 1
+  throw "Carbon\Test-Privilege failed: $url with ${_}"
 }

@@ -71,7 +71,7 @@
     dest: '{{ buildbot_worker_basedir }}/info/host'
 
 - name: Service User
-  script: service_user.ps1 {{ buildbot_winworker_user }}
+  script: service_user.ps1 '{{ buildbot_winworker_domain }}\{{ buildbot_winworker_user }}'
   register: buildbot_winworker_service_user_result
   failed_when: >
     '' != buildbot_winworker_service_user_result.stderr
