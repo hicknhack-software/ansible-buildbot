@@ -6,4 +6,4 @@ buildbot_winworker_choco_packages:
 - carbon # used to grant privileges http://get-carbon.org/
 - 7zip.commandline # used for silent pywin32 install
 - name: 'git.install' # required to get build sources
-  version: '1.9.5.20150114'
+  version: '2.17.1.2'

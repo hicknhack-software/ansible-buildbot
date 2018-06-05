@@ -43,6 +43,12 @@
   tags:
   - pywin32
 
+- name: Install Powershell Community Extensions
+  win_psmodule:
+    name: pscx
+    state: present
+    allow_clobber: yes # pscx wants to install 'gcb' alias, which already exists on modern powershell
+
 - name: Install Buildbot Worker
   script: 'install_buildbot_worker.ps1'
   # args:
