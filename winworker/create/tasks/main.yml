@@ -77,8 +77,10 @@
     src: 'host.j2'
     dest: '{{ buildbot_worker_basedir }}/info/host'
 
+# This step allows the default user to start background services
+# The username translation may fail, depending on whether the hostname and domain have been set correctly
 - name: Service User
-  script: service_user.ps1 '.\{{ buildbot_winworker_user }}'
+  script: service_user.ps1 '{{ buildbot_winworker_domain }}\{{ buildbot_winworker_user }}'
   register: buildbot_winworker_service_user_result
   failed_when: >
     '' != buildbot_winworker_service_user_result.stderr

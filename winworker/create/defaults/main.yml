@@ -6,6 +6,7 @@ buildbot_worker_description: "Buildbot Worker build by Ansible"
 # the user has to exist!
 buildbot_winworker_user: 'vagrant'
 buildbot_winworker_password: 'vagrant'
+buildbot_winworker_domain: '{{ ansible_hostname }}'
 
 # base folder for all worker configurations
 buildbot_worker_basedir: 'C:\build'
