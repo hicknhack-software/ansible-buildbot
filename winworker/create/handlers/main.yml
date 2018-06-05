@@ -7,6 +7,7 @@
   delegate_to: '{{ buildbot_master_host }}'
 
 - name: restart buildbot winworker
-  win_file:
-    path: "{{ buildbot_worker_basedir }}\\restart.txt"
-    state: touch
+  win_service:
+    name: BuildBot
+    state: restarted
+    

@@ -16,6 +16,7 @@
   script: 'win32_os_caption.ps1'
   changed_when: false
   register: buildbot_win32_os_caption_result
+  tags: [always]
 
 - name: Store facts
   set_fact:
@@ -77,7 +78,7 @@
     dest: '{{ buildbot_worker_basedir }}/info/host'
 
 - name: Service User
-  script: service_user.ps1 '{{ buildbot_winworker_domain }}\{{ buildbot_winworker_user }}'
+  script: service_user.ps1 '.\{{ buildbot_winworker_user }}'
   register: buildbot_winworker_service_user_result
   failed_when: >
     '' != buildbot_winworker_service_user_result.stderr
@@ -96,6 +97,15 @@
     or ('Error installing service:' in buildbot_winworker_service_result.stdout)
   changed_when: >
     ('Service installed' in buildbot_winworker_service_result.stdout)
+
+- name: Setting BuildBot directory in Registry
+  win_regedit:
+    path: HKLM:\SYSTEM\CurrentControlSet\services\BuildBot\Parameters
+    name: directories
+    data: '{{ buildbot_worker_basedir }}'
+  tags:
+  - regedit
+
 
 - name: Folder
   win_file:
