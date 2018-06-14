@@ -1,5 +1,4 @@
 ---
-- name: reconfigure buildbot master
-  service:
-    name: buildbot
-    state: reloaded
+- name: restart buildbot master
+  set_fact:
+    buildbot_master_restart: true

@@ -1,6 +1,4 @@
 ---
 - name: restart buildbot master
-  service:
-    name: buildbot
-    state: restarted
-
+  set_fact:
+    buildbot_master_restart: true

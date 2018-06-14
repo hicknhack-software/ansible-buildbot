@@ -1,6 +1,12 @@
 ---
 
-- name: start buildbot master
+- name: enable buildbot master
   service:
     name: buildbot
-    state: started
+    enabled: yes
+
+- name: restart buildbot master
+  service:
+    name: buildbot
+    state: restarted
+  when: buildbot_master_restart | default(False)

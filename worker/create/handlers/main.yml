@@ -7,6 +7,5 @@
   delegate_to: '{{ buildbot_master_host }}'
 
 - name: restart buildbot worker
-  service:
-    name: buildbot-worker
-    state: restarted
+  set_fact:
+    buildbot_worker_restart: true

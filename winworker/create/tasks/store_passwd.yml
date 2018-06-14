@@ -10,6 +10,7 @@
     src: "{{ buildbot_winworker_password_path }}"
   failed_when: no
   register: buildbot_read_password
+  tags: [always]
 
 - name: store_passwd | Generate Worker Password
   set_fact:
