@@ -1,9 +1,11 @@
+$identity = $($args[0])
+
 try {
-  $right = Carbon\Test-Privilege -Identity $($args[0]) -Privilege SeServiceLogonRight
+  $right = Carbon\Test-Privilege -Identity ${identity} -Privilege SeServiceLogonRight
   if (-not $right) {
-    Carbon\Grant-Privilege -Identity $($args[0]) -Privilege SeServiceLogonRight
+    Carbon\Grant-Privilege -Identity ${identity} -Privilege SeServiceLogonRight
     echo "Changed"
   }
 } catch [System.Exception] {
-  throw "Carbon\Test-Privilege failed: $url with ${_}"
+  throw "Carbon\Test-Privilege failed: identity=${identity} with ${_}"
 }
