@@ -1,5 +1,5 @@
 ---
-buildbot_master_host: '' # required ansible hostname
+buildbot_master_host: "{{ groups[buildbot_master_group | default('buildbot-masters')] | first }}"
 buildbot_worker_admin: "Ansible <admin@{{ buildbot_worker_name }}>"
 buildbot_worker_description: "Buildbot Worker build by Ansible"
 
