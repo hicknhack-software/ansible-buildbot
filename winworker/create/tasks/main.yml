@@ -52,8 +52,10 @@
 
 - name: Install Buildbot Worker
   script: 'install_buildbot_worker.ps1'
-  # args:
-  #    creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
+  register: install_buildbot_worker_result
+  changed_when: >
+    "Installed" in install_buildbot_worker_result.stdout
+
 
 - name: Create Worker
   script: >
