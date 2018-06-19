@@ -1,9 +1,7 @@
 ---
 - name: reconfigure buildbot master
-  service:
-    name: buildbot
-    state: reloaded
-  become: yes
+  set_fact:
+    buildbot_master_reload: true
   delegate_to: '{{ buildbot_master_host }}'
 
 - name: restart buildbot winworker

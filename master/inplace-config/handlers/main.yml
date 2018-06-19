@@ -2,3 +2,7 @@
 - name: restart buildbot master
   set_fact:
     buildbot_master_restart: true
+
+- name: reconfigure buildbot master
+  set_fact:
+    buildbot_master_reload: true

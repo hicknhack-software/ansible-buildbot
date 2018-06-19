@@ -5,6 +5,12 @@
     name: buildbot
     enabled: yes
 
+- name: reload buildbot master
+  service:
+    name: buildbot
+    state: reloaded
+  when: buildbot_master_reload | default(False)
+
 - name: restart buildbot master
   service:
     name: buildbot
