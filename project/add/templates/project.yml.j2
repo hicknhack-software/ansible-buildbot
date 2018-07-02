@@ -10,3 +10,7 @@ repoCredentials:
     user: '{{ credential.user }}'
     password: '{{ credential.password }}'
 {%- endfor %}
+
+redmineUser: '{{ project_redmine_credentials.user }}'
+redminePassword: '{{ project_redmine_credentials.password }}'
+redmineUrl: '{{ project_redmine_credentials.url }}'

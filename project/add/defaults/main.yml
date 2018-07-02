@@ -9,3 +9,7 @@ project_repo_credentials:
   - url: ''
     user: ''
     password: ''
+project_redmine_credentials:
+  url: ''
+  user: ''
+  password: ''
