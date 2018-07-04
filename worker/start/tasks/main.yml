@@ -1,13 +1,13 @@
 ---
 - meta: flush_handlers
 
+- name: Enable Worker Service
+  service:
+    name: buildbot-worker
+    enabled: yes
+
 - name: Restart Worker
   service:
     name: buildbot-worker
     state: restarted
   when: buildbot_worker_restart | default(False)
-
-- name: Start Worker
-  service:
-    name: buildbot-worker
-    enabled: yes

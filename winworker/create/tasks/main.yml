@@ -68,6 +68,7 @@
      creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
   notify:
   - restart buildbot winworker
+  - reconfigure buildbot master
 
 - name: Admin
   win_template:
