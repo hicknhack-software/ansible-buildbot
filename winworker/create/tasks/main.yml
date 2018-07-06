@@ -10,6 +10,14 @@
   tags:
   - winkill
 
+- name: Allow Shutdown without Login
+  win_regedit:
+    path: HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System
+    name: shutdownwithoutlogon
+    type: dword
+    data: 1
+  tags: [regedit]
+
 - include: store_passwd.yml
 
 - name: Capture Version
