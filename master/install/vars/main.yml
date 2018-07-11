@@ -10,3 +10,4 @@ buildbot_master_apt_packages:
 buildbot_master_pip_packages:
 - pyopenssl
 - jrnl
+- uritemplate # For GitHub uploader
