@@ -1,17 +1,22 @@
-name: '{{ project_name }}'
-repoType: '{{ project_repo_type }}'
-repoUrl: '{{ project_repo_url }}'
-repoBranch: '{{ project_repo_branch }}'
-repoUser: '{{ project_repo_user }}'
-repoPassword: '{{ project_repo_password }}'
-repoMode: '{{ project_repo_mode }}'
+name: '{{ project.name }}'
+repoType: '{{ project.repo_type | default("git") }}'
+repoUrl: '{{ project.repo_url }}'
+repoBranch: '{{ project.repo_branch | default("") }}'
+repoUser: '{{ project.repo_user | default("") }}'
+repoPassword: '{{ project.repo_password | default("") }}'
+repoMode: '{{ project.repo_mode | default("incremental") }}'
 repoCredentials:
-{%- for credential in project_repo_credentials %}    
+{%- for credential in project.repo_credentials %}    
   - url: '{{ credential.url }}'
     user: '{{ credential.user }}'
     password: '{{ credential.password }}'
 {%- endfor %}
 
-redmineUser: '{{ project_redmine_credentials.user }}'
-redminePassword: '{{ project_redmine_credentials.password }}'
-redmineUrl: '{{ project_redmine_credentials.url }}'
+{%- if "redmine_credentials" in project %}
+
+redmineUser: '{{ project.redmine_credentials.user }}'
+redminePassword: '{{ project.redmine_credentials.password }}'
+redmineUrl: '{{ project.redmine_credentials.url }}'
+{%- endif %}
+
+githubToken: '{{ project.github_token | default("") }}'

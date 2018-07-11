@@ -2,7 +2,7 @@
 - name: config
   template:
     src: 'project.yml.j2'
-    dest: '{{ buildbot_master_projects_path }}/{{ project_name }}.yml'
+    dest: '{{ buildbot_master_projects_path }}/{{ project.name }}.yml'
   become: yes
   become_user: '{{ buildbot_master_user }}'
   notify:
