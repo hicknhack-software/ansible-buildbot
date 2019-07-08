@@ -2,7 +2,7 @@
 buildbot_master_host: "{{ groups[buildbot_master_group | default('buildbot-masters')] | first }}"
 buildbot_worker_admin: "Ansible <admin@{{ buildbot_worker_name }}>"
 buildbot_worker_description: "Buildbot Worker build by Ansible"
-buildbot_version: '1.1.0'
+buildbot_version: '2.3.1'
 
 # the user has to exist!
 buildbot_winworker_user: 'vagrant'

@@ -2,6 +2,7 @@
 - name: Install dependencies
   pip:
     name: 'pyYAML'
+    executable: pip3
 
 - name: Git checkout
   git:
