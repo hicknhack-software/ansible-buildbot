@@ -1,9 +1,9 @@
 ---
 buildbot_master_apt_packages:
 - git # required to checkout
-- python-pip # required for buildbot pip
+- python3-pip # required for buildbot pip
 - build-essential # required for building buildbot package
-- python-dev # required for compiling
+- python3-dev # required for compiling
 - libssl-dev # requiref for OpenSSL support
 - libffi-dev # pyopenssl
 

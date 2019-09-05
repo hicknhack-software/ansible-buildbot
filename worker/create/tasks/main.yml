@@ -12,12 +12,14 @@
 - name: Install PIP packages
   pip:
     name: '{{ item }}'
+    executable: pip3
   with_items: '{{ buildbot_worker_pip_packages }}'
 
 - name: update PIP/Setuptools
   pip:
     name: "{{ item }}"
     state: latest
+    executable: pip3
   with_items:
     - pip
     - setuptools # buildbot fails otherwise
@@ -26,6 +28,7 @@
   pip:
     name: "buildbot-worker"
     version: "{{ buildbot_version }}"
+    executable: pip3
 
 - name: User
   user:

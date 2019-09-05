@@ -11,6 +11,7 @@
   pip:
     name: "{{ item }}"
     state: latest
+    executable: pip3
   with_items:
     - pip
     - setuptools
@@ -18,12 +19,14 @@
 - name: Install PIP packages
   pip:
     name: "{{ item }}"
+    executable: pip3
   with_items: "{{ buildbot_master_pip_packages }}"
 
 - name: Install PIP buildbot
   pip:
     name: "{{ item }}"
     version: "{{ buildbot_version }}"
+    executable: pip3
   notify:
   - restart buildbot masters
   with_items:
