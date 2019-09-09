@@ -8,7 +8,8 @@ sys.path.append('inplace')
 from buildbot_inplace import InplaceConfig
 
 import buildbot_inplace
-reload(buildbot_inplace)
+import importlib
+importlib.reload(buildbot_inplace)
 
 c = BuildmasterConfig = InplaceConfig()
 c['protocols'] = {'pb': dict(port={{ buildbot_master_worker_port }})}
