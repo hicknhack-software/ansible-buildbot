@@ -3,6 +3,7 @@
   template:
     src: 'project.yml.j2'
     dest: '{{ buildbot_master_projects_path }}/{{ project.name }}.yml'
+    mode: 0600
   become: yes
   become_user: '{{ buildbot_master_user }}'
   notify:
