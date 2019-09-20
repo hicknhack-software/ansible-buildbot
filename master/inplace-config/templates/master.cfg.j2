@@ -2,13 +2,13 @@
 # ex: set syntax=python:
 # {{ ansible_managed }}
 
-from buildbot.plugins import *
 import sys
+import importlib
+from buildbot.plugins import *
 sys.path.append('inplace')
 from buildbot_inplace import InplaceConfig
-
 import buildbot_inplace
-import importlib
+
 importlib.reload(buildbot_inplace)
 
 c = BuildmasterConfig = InplaceConfig()
