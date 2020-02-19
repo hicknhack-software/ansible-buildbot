@@ -30,4 +30,3 @@
     buildbot_master_basedir: '{{ buildbot_master_basedir }}'
     buildbot_master_user: '{{ buildbot_master_user }}'
   tags: [always]
-

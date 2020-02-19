@@ -15,7 +15,7 @@ buildbot_worker_name: '{{ ansible_hostname }}'
 buildbot_worker_password: '{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}'
 
 # connection to the buildmaster
-buildbot_worker_master_host: '{{ buildbot_master_host }}'
+buildbot_worker_master_host: '{{ hostvars[buildbot_master_host].ansible_hostname }}'
 buildbot_worker_master_port: '{{ hostvars[buildbot_master_host].buildbot_master_worker_port }}'
 
 # the machine configuration

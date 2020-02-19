@@ -10,5 +10,5 @@ buildbot_worker_apt_packages:
 
 buildbot_worker_pip_packages:
 - pyopenssl
-- jrnl
+#- jrnl
 - service_identity
