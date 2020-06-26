@@ -20,11 +20,22 @@ c.load_workers('{{ buildbot_master_workers_dir }}')
 # loading projects
 c.load_projects('{{ buildbot_master_projects_dir }}')
 
-# TODO: Setup mail reporter
-# m = reporters.MailNotifier(fromaddr="buildbot@localhost",
-#                            extraRecipients=["builds@lists.example.com"],
-#                            sendToInterestedUsers=False)
-# c['services'].append(m)
+
+mail_formatter = reporters.MessageFormatter(
+	template_dir='{{ buildbot_master_email_template_dir }}',
+	template_filename='{{ buildbot_master_email_body_template_file }}',
+	subject_filename='{{ buildbot_master_email_subject_template_file}}')
+mail_notifier = reporters.MailNotifier(
+	fromaddr='{{ buildbot_master_email_notification_from }}',
+	relayhost='{{ buildbot_master_email_notification_relayhost}}',
+	smtpPort='{{ buildbot_master_email_notification_smtp_port }}',
+	smtpUser='{{ buildbot_master_email_notification_smtp_user }}',
+	smtpPassword='{{ buildbot_master_email_notification_smtp_password }}',
+	mode='{{ buildbot_master_email_notification_mode }}',
+	subject="%(builder)s",
+	addLogs='{{ buildbot_master_email_notification_add_logs }}',
+	useTls='{{ buildbot_master_email_notification_use_tls }}')
+c['services'] = [mail_notifier]
 
 c['buildbotNetUsageData'] = None
 
