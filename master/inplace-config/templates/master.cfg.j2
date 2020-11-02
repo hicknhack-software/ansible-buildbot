@@ -34,7 +34,7 @@ mail_notifier = reporters.MailNotifier(
 	mode='{{ buildbot_master_email_notification_mode }}',
 	subject="%(builder)s",
 	addLogs='{{ buildbot_master_email_notification_add_logs }}',
-	useTls='{{ buildbot_master_email_notification_use_tls }}')
+	useSmtps='{{ buildbot_master_email_notification_use_smtps }}')
 c['services'] = [mail_notifier]
 
 c['buildbotNetUsageData'] = None
