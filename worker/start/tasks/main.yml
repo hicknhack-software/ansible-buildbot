@@ -5,9 +5,4 @@
   service:
     name: buildbot-worker
     enabled: yes
-
-- name: Restart Worker
-  service:
-    name: buildbot-worker
-    state: restarted
-  when: buildbot_worker_restart | default(False)
+    state: "{{ 'restarted' if (buildbot_worker_restart | default(False)) else 'started' }}"
