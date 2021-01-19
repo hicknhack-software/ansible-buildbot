@@ -9,12 +9,6 @@
     cache_valid_time: 86400
   with_items: "{{ buildbot_worker_apt_packages }}"
 
-- name: Install PIP packages
-  pip:
-    name: '{{ item }}'
-    executable: pip3
-  with_items: '{{ buildbot_worker_pip_packages }}'
-
 - name: update PIP/Setuptools
   pip:
     name: "{{ item }}"
@@ -23,6 +17,12 @@
   with_items:
     - pip
     - setuptools # buildbot fails otherwise
+
+- name: Install PIP packages
+  pip:
+    name: '{{ item }}'
+    executable: pip3
+  with_items: '{{ buildbot_worker_pip_packages }}'
 
 - name: Install PIP buildbot worker
   pip:
