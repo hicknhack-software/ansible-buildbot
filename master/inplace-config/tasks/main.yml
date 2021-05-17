@@ -27,7 +27,7 @@
   - '{{ buildbot_master_users_dir }}'
   - '{{ buildbot_master_email_template_dir }}'
 
-- name: Create EMail template file
+- name: Create E-Mail template file
   file:
     dest: '{{ buildbot_master_basedir }}/{{ buildbot_master_email_template_dir }}'
     state: directory
