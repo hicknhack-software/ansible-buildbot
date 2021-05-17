@@ -22,9 +22,11 @@ c.load_projects('{{ buildbot_master_projects_dir }}')
 
 
 mail_formatter = reporters.MessageFormatter(
+	ctx=dict(statuses=util.Results),
 	template_dir='{{ buildbot_master_email_template_dir }}',
 	template_filename='{{ buildbot_master_email_body_template_file }}',
 	subject_filename='{{ buildbot_master_email_subject_template_file}}')
+	
 mail_notifier = reporters.MailNotifier(
 	fromaddr='{{ buildbot_master_email_notification_from }}',
 	relayhost='{{ buildbot_master_email_notification_relayhost}}',
