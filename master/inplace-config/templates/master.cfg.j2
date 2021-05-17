@@ -33,6 +33,7 @@ mail_notifier = reporters.MailNotifier(
 	smtpPassword='{{ buildbot_master_email_notification_smtp_password }}',
 	mode='{{ buildbot_master_email_notification_mode }}',
 	subject="%(builder)s",
+	messageFormatter=mail_formatter,
 	addLogs='{{ buildbot_master_email_notification_add_logs }}',
 	useSmtps='{{ buildbot_master_email_notification_use_smtps }}')
 c['services'] = [mail_notifier]
