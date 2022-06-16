@@ -7,7 +7,7 @@
 
 - name: Create Master
   command: 'buildbot create-master {{ buildbot_master_basedir }}'
-  become: yes
+  become: true
   become_user: '{{ buildbot_master_user }}'
   args:
     creates: '{{ buildbot_master_basedir }}/buildbot.tac'
@@ -17,7 +17,7 @@
 
 - name: Upgrade Master
   command: 'buildbot upgrade-master {{ buildbot_master_basedir }}'
-  become: yes
+  become: true
   become_user: '{{ buildbot_master_user }}'
   when: >
     ((buildbot_master_pip_result | default({})).changed | default(False))

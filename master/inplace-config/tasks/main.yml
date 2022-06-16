@@ -10,7 +10,7 @@
     version: "{{ buildbot_master_inplace_version }}"
     dest: '{{ buildbot_master_inplace_dest }}'
     force: yes
-  become: yes
+  become: true
   become_user: '{{ buildbot_master_user }}'
   tags: [git]
 

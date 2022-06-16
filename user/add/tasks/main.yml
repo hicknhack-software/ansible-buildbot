@@ -5,7 +5,7 @@
     dest: '{{ buildbot_master_users_path }}/{{ username }}.yml'
     owner: '{{ buildbot_master_user }}'
     mode: 0600
-  become: yes
+  become: true
   become_user: '{{ buildbot_master_user }}'
   notify:
   - reconfigure buildbot master

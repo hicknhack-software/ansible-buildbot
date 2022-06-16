@@ -28,7 +28,7 @@
       echo "Not starting master buildbot, because either no workers or no projects configured!" 1>&2
       exit 1
     fi
-  become: yes
+  become: true
   become_user: '{{ buildbot_master_user }}'
   when: buildbot_master_restart_remove.changed
 
@@ -44,7 +44,7 @@
     if [ -n "$(ls -A {{ buildbot_master_workers_path }})" -a -n "$(ls -A {{ buildbot_master_projects_path }})" ]; then
       buildbot reconfig {{ buildbot_master_basedir }} || buildbot start {{ buildbot_master_basedir }}
     fi
-  become: yes
+  become: true
   become_user: '{{ buildbot_master_user }}'
   when: >
     buildbot_master_reconfig_remove.changed
