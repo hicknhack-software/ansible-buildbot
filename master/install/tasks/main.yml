@@ -1,39 +1,38 @@
 ---
 - name: install APT packages
   apt:
-    name: "{{ item }}"
+    name: "{{ buildbot_master_apt_packages }}"
     update_cache: yes
     state: latest
     cache_valid_time: 86400
-  with_items: "{{ buildbot_master_apt_packages }}"
 
 - name: update PIP/Setuptools
   pip:
-    name: "{{ item }}"
+    name:
+      - pip
+      - setuptools
     state: latest
     executable: pip3
-  with_items:
-    - pip
-    - setuptools
+  # if this fails try:
+  #   python3 -m pip install --upgrade pip
 
 - name: Install PIP packages
   pip:
-    name: "{{ item }}"
+    name: "{{ buildbot_master_pip_packages }}"
     executable: pip3
-  with_items: "{{ buildbot_master_pip_packages }}"
+    extra_args: "--ignore-installed PyYAML"
 
 - name: Install PIP buildbot
   pip:
-    name: "{{ item }}"
+    name:
+      - buildbot[tls] # explicitly set the TLS option
+      - buildbot-www
+      - buildbot-waterfall-view
+      - buildbot-console-view
     version: "{{ buildbot_version }}"
     executable: pip3
   notify:
   - restart buildbot masters
-  with_items:
-  - buildbot[tls] # explicitly set the TLS option
-  - buildbot-www
-  - buildbot-waterfall-view
-  - buildbot-console-view
 
 - name: SystemD Unit File
   template:

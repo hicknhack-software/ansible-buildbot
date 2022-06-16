@@ -3,7 +3,7 @@
   service:
     name: buildbot
     state: reloaded
-  become: yes
+  become: true
   delegate_to: '{{ buildbot_master_host }}'
 
 - name: restart buildbot worker

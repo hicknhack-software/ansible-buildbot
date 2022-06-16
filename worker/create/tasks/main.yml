@@ -1,28 +1,44 @@
 ---
 - include: store_passwd.yml
 
+## note: create VM with bionic instead!
+# - name: upgrade to 18.04
+#   apt:
+#     update_cache: yes
+#     upgrade: dist
+#     autoremove: yes
+#   when: ansible_distribution_major_version < 18
+#   register: dist_upgrade
+# - name: Reboot vm
+#   reboot:
+#     connect_timeout: "5"
+#     post_reboot_delay: "15"
+#     reboot_timeout: "600"
+#   when: dist_upgrade.changed
+
+# - name: do facts module to get latest information
+#   setup: {}
+#   when: dist_upgrade.changed
+
 - name: install APT packages
   apt:
-    name: "{{ item }}"
+    name: "{{ buildbot_worker_apt_packages }}"
     state: latest
     update_cache: yes
     cache_valid_time: 86400
-  with_items: "{{ buildbot_worker_apt_packages }}"
 
 - name: update PIP/Setuptools
   pip:
-    name: "{{ item }}"
+    name:
+      - pip # < 21 for 16.04
+      - setuptools # buildbot fails otherwise, < 51 for 16.04
     state: latest
     executable: pip3
-  with_items:
-    - pip
-    - setuptools # buildbot fails otherwise
 
 - name: Install PIP packages
   pip:
-    name: '{{ item }}'
+    name: '{{ buildbot_worker_pip_packages }}'
     executable: pip3
-  with_items: '{{ buildbot_worker_pip_packages }}'
 
 - name: Install PIP buildbot worker
   pip:
@@ -50,7 +66,7 @@
 - name: Create Utilities
   copy:
     src: 'utilities/'
-    dest: '{{ buildbot_worker_utilities_dir }}'
+    dest: '{{ buildbot_worker_utilities_dir }}'
     owner: '{{ buildbot_worker_user }}'
     group: '{{ buildbot_worker_user }}'
 
@@ -59,7 +75,7 @@
     buildbot-worker create-worker {{ buildbot_worker_basedir }}
     {{ buildbot_worker_master_host }}:{{ buildbot_worker_master_port }}
     {{ buildbot_worker_name }} {{ generated_worker_password }}
-  become: yes
+  become: true
   become_user: '{{ buildbot_worker_user }}'
   args:
     creates: '{{ buildbot_worker_basedir }}/buildbot.tac'
@@ -90,6 +106,7 @@
     buildbot_worker_shell: '{{ buildbot_worker_shell }}'
     buildbot_worker_basedir: '{{ buildbot_worker_basedir }}'
     buildbot_worker_prepare_dir: '{{ buildbot_worker_prepare_dir }}'
+    buildbot_worker_utilities_dir: '{{ buildbot_worker_utilities_dir }}'
     buildbot_worker_platforms: '{{ buildbot_worker_platforms }}'
     buildbot_worker_setups: []
   tags: [always]
